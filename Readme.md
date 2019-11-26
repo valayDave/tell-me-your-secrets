@@ -16,7 +16,7 @@ A simple module which finds files with different secrets keys present inside a d
 
 ### Via Python pip
 
-- ``pip install tell_me_your_secrets``
+- ``pip install tell-me-your-secrets``
 - ``tell-me-your-secrets [-h] [-c CONFIG_PATH] [-w WRITE_PATH] <SEARCH_PATH>``
 
 ### Building Project 
