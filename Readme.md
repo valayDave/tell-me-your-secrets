@@ -5,6 +5,7 @@ A simple module which finds files with different secrets keys present inside a d
 ## Setup 
 
 - Python 3.4+ 
+- Ubuntu 16.04, 18.04
 - ```pip install -r requirements.txt```
 
 ## Module Usage 
