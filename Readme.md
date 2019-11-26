@@ -2,27 +2,29 @@
 
 A simple module which finds files with different secrets keys present inside a directory. Secrets derived from 120 different signatures.
 
-## Setup 
-
+## Currently Tested On  
 - Python 3.4+ 
 - Ubuntu 16.04, 18.04
-- ```pip install -r requirements.txt```
 
-## Module Usage 
 
-### From Source 
-
-- ``python sniff_my_secrets.py [-h] [-c CONFIG_PATH] [-w WRITE_PATH] <SEARCH_PATH>``
-
-### Via Python pip
+## Module Installation Via Pip
 
 - ``pip install tell-me-your-secrets``
+- or 
+- ``pip3 install tell-me-your-secrets``
+
+
+## Module Installation From Source 
+
+- ``git clone git@github.com:valayDave/tell-me-your-secrets.git``
+- ``cd tell-me-your-secrets``
+- ``python3 -m venv .env``
+- ``source .env/bin/activate``
+- ``pip install .``
+
+## Module Usage
+
 - ``tell-me-your-secrets [-h] [-c CONFIG_PATH] [-w WRITE_PATH] <SEARCH_PATH>``
-
-### Building Project 
-
-- ``python setup.py sdist bdist_wheel``
-- ``twine upload dist/*``
 
 ## Module Configuration
 
@@ -38,6 +40,10 @@ signatures: # list of signatures to check
     regex: '' # regex pattern (if no match element)
     name: '' # name of the signature
 ```
+
+## Contributing
+
+- Fork and branch based PR. 
 
 ## Module Inspiration
 
