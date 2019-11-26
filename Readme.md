@@ -1,6 +1,6 @@
 # Tell Me Your Secrets
 
-A simple module which files with different secrets keys present inside a directory. Secrets derived from 120 different signatures.
+A simple module which finds files with different secrets keys present inside a directory. Secrets derived from 120 different signatures.
 
 ## Setup 
 
