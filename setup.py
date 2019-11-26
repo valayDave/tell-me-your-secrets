@@ -10,7 +10,7 @@ setuptools.setup(
     # Give a short description about your library
     description='A simple module which finds files with different secrets keys present inside a directory. Secrets derived from 120 different signatures.',
     author='Valay Dave',                   # Type in your name
-
+    include_package_data=True,
     author_email='valaygaurang@gmail.com',      # Type in your E-Mail
     # Provide either the link to your github or to your website
     url='https://github.com/valayDave/tell-me-your-secrets',

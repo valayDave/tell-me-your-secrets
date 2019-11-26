@@ -1,0 +1,3 @@
+include Readme.md
+include tell_me_your_secrets/config.yml
+include LICENSE.txt
