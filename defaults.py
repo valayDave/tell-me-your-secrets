@@ -1,5 +1,0 @@
-MAX_FILE_SIZE = 3000 * 1000 # In Bytes == 3MB
-VERBOSE_OUTPUT = True
-SAVE_ON_COMPLETE = False
-MODULE_NAME = 'Sniff-My-Secrets'
-DEFAULT_OUTPUT_PATH = 'Output/'

@@ -2,8 +2,8 @@ import yaml
 import os
 import abc
 import pathlib # For Python 3.4.. TODO : Check for this. 
-from defaults import *
-import logger
+from .defaults import *
+from .logger import create_logger
 import re
 from pandas import DataFrame
 import datetime
@@ -25,7 +25,7 @@ arguement_parser.add_argument('search_path',help='The Root Directory From which 
 arguement_parser.add_argument('-c','--config',help='Path To Another config.yml for Extracting The Data')
 arguement_parser.add_argument('-w','--write',help='Path of the csv File to which results are written')
 
-module_logger = logger.create_logger(MODULE_NAME)
+module_logger = create_logger(MODULE_NAME)
 
 # Options
     # --path <PATH>: Checks Signatures in the Path.
@@ -166,7 +166,9 @@ class SignatureRecognizer:
     def write_results_to_file(self):
         if len(self.matched_signatures) > 0:
             write_df = DataFrame(self.matched_signatures)
-            file_name = self.output_path+MODULE_NAME+datetime.datetime.now().strftime('-%m-%d-%Y-%-%m')+'.csv'
+            if '.csv' not in self.output_path:
+                self.output_path+='.csv'
+            file_name = self.output_path
             write_df.to_csv(file_name)
             
     
@@ -225,7 +227,7 @@ def init_signature(config,path,write_path):
 def run_service():
     # $ todo : Import Config.yml or Use the one From defaults. 
     parsed_arguements = arguement_parser.parse_args()
-    config_path = os.path.join(os.path.abspath(sys.path[0]),'config.yml')
+    config_path = DEFAULT_CONFIG_PATH
     if parsed_arguements.config is not None:
         config_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),parsed_arguements.config))
 
