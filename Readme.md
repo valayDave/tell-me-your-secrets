@@ -11,6 +11,21 @@ A simple module which finds files with different secrets keys present inside a d
 
 - `python sniff_my_secrets.py [-h] [-c CONFIG_PATH] [-w WRITE_PATH] <SEARCH_PATH>`
 
+## Module Configuration
+
+- The ``config.yml`` file contains the configuration for the module. All signatures derived from the config file. 
+
+```yaml
+blacklisted_extensions: [] # list of extensions to ignore
+blacklisted_paths: [] # list of paths to ignore
+red_flag_extensions: [] # list of Extensions not be ignored
+signatures: # list of signatures to check
+  - part: '' # either filename, extension, path or contents
+    match: '' # simple text comparison (if no regex element)
+    regex: '' # regex pattern (if no match element)
+    name: '' # name of the signature
+```
+
 ## Module Inspiration
 
 As a sysadmin, when machines are provisioned on the cloud to developers, some wrecklessly leave secret keys and files behind on those machines. This module helps find such leakages.
@@ -19,6 +34,7 @@ As a sysadmin, when machines are provisioned on the cloud to developers, some wr
 
 - Signatures Derived from [shhgit](https://github.com/eth0izzle/shhgit)
 
+- Available Signatures : 
 ```
 Chef private key, Potential Linux shadow file, Potential Linux passwd file, Docker configuration file, NPM configuration file, Environment configuration file, Contains a private key, AWS Access Key ID Value, AWS Access Key ID, AWS Account ID, AWS Secret Access Key, AWS Session Token, Artifactory, CodeClimate, Facebook access token, Google (GCM) Service account, Stripe API key, Google OAuth Key, Google Cloud API Key
 Google OAuth Access Token, Picatic API key, Square Access Token, Square OAuth Secret, PayPal/Braintree Access Token, Amazon MWS Auth Token, Twilo API Key, MailGun API Key, MailChimp API Key, SSH Password, Outlook team, Sauce Token, Slack Token, Slack Webhook, SonarQube Docs API Key, HockeyApp, Username and password in URI, NuGet API Key, Potential cryptographic private key, Log file, Potential cryptographic key bundle, Potential cryptographic key bundle
