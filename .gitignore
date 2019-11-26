@@ -1,0 +1,7 @@
+*.pem
+.env/
+__pycache__
+.vscode/
+*.go
+*.csv
+Output/
