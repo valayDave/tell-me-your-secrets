@@ -3,7 +3,7 @@ import os
 import abc
 import pathlib # For Python 3.4.. TODO : Check for this. 
 from .defaults import *
-from .logger import create_logger
+from .logger import create_logger,logging
 import re
 from pandas import DataFrame
 import datetime
@@ -25,7 +25,7 @@ arguement_parser.add_argument('search_path',help='The Root Directory From which 
 arguement_parser.add_argument('-c','--config',help='Path To Another config.yml for Extracting The Data')
 arguement_parser.add_argument('-w','--write',help='Path of the csv File to which results are written')
 
-module_logger = create_logger(MODULE_NAME)
+module_logger = create_logger(MODULE_NAME,level=logging.INFO)
 
 # Options
     # --path <PATH>: Checks Signatures in the Path.
@@ -151,7 +151,7 @@ class SignatureRecognizer:
         # $ todo
         filtered_files = self.get_files(self.path)
         for possible_compromised_path in filtered_files:
-            module_logger.debug("Opening File : %s",possible_compromised_path)
+            # module_logger.debug("Opening File : %s",possible_compromised_path)
             file_content = get_file_data(possible_compromised_path)
             # $ Run the Signature Checking Engine over here For different Pattern Signatures. 
             signature_name,signature_part = self.run_signatures(possible_compromised_path,file_content)
@@ -160,6 +160,7 @@ class SignatureRecognizer:
                 if self.print_results:
                     module_logger.info('Signature Matched : %s | On Part : %s | With File : %s',signature_name,signature_part,possible_compromised_path)
 
+        module_logger.info("Found %d Matches from the Path %s",len(self.matched_signatures),self.path)
         if self.write_results:
             self.write_results_to_file()
     
@@ -170,6 +171,7 @@ class SignatureRecognizer:
                 self.output_path+='.csv'
             file_name = self.output_path
             write_df.to_csv(file_name)
+            module_logger.info('Completed Writing Results to File : %s',self.output_path)
             
     
     def run_signatures(self,file_path,content):
@@ -229,12 +231,13 @@ def run_service():
     parsed_arguements = arguement_parser.parse_args()
     config_path = DEFAULT_CONFIG_PATH
     if parsed_arguements.config is not None:
-        config_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),parsed_arguements.config))
+        config_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguements.config)))
 
     search_path =  os.path.abspath(os.path.join(os.path.abspath(sys.path[0])))
     if parsed_arguements.search_path != '.':
-        search_path =  os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),parsed_arguements.search_path))
+        search_path =  os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguements.search_path)))
     
+    module_logger.debug('Running Config From Path : %s',config_path)
     f = open(config_path)
     config = yaml.load(f,Loader=yaml.FullLoader)
     f.close()

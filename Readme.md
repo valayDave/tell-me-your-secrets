@@ -10,7 +10,19 @@ A simple module which finds files with different secrets keys present inside a d
 
 ## Module Usage 
 
-- `python sniff_my_secrets.py [-h] [-c CONFIG_PATH] [-w WRITE_PATH] <SEARCH_PATH>`
+### From Source 
+
+- ``python sniff_my_secrets.py [-h] [-c CONFIG_PATH] [-w WRITE_PATH] <SEARCH_PATH>``
+
+### Via Python pip
+
+- ``pip install tell_me_your_secrets``
+- ``tell-me-your-secrets [-h] [-c CONFIG_PATH] [-w WRITE_PATH] <SEARCH_PATH>``
+
+### Building Project 
+
+- ``python setup.py sdist bdist_wheel``
+- ``twine upload dist/*``
 
 ## Module Configuration
 

@@ -4,7 +4,7 @@ setuptools.setup(
     # How you named your package folder (MyLib)
     name='tell_me_your_secrets',
     packages=setuptools.find_packages(),
-    version='1.0',      # Start with a small number and increase it with every change you make
+    version='1.6',      # Start with a small number and increase it with every change you make
     # Chose a license from here: https://help.github.com/articles/licensing-a-repository
     license='MIT',
     # Give a short description about your library
@@ -30,7 +30,8 @@ setuptools.setup(
         'Development Status :: 4 - Beta',
         # Define that your audience are developers
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Security Tools :: Secrets :: AWS :: GCP :: SSH',
+        'Topic :: Security',
+        'Topic :: System :: Systems Administration',
         'License :: OSI Approved :: MIT License',   # Again, pick a license
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
