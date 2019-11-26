@@ -244,7 +244,7 @@ def run_service():
     
     write_path = None
     if parsed_arguements.write is not None:
-        write_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),parsed_arguements.write))
+        write_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguements.write)))
     
     # $ todo : Extract FILTERED Files from the Path 
     sig_recognizer = init_signature(config,search_path,write_path)

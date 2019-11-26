@@ -1,5 +1,5 @@
 blacklisted_extensions: ['.DS_Store',".exe", ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".psd", ".xcf", ".zip", ".tar.gz", ".ttf", ".lock",".pyc",".so",".o"]
-blacklisted_paths: ["CMakeFiles{sep}","node_modules{sep}", "vendor{sep}bundle", "vendor{sep}cache",'.env{sep}','.git{sep}'] # use {sep} for the OS' path seperator (i.e. / or \)
+blacklisted_paths: ["CMakeFiles{sep}","node_modules{sep}", "vendor{sep}bundle", "vendor{sep}cache",'.env{sep}','.git{sep}','tell_me_your_secrets{sep}'] # use {sep} for the OS' path seperator (i.e. / or \)
 red_flag_extensions: [".pem", "id_rsa", ".asc", ".ovpn", ".sqlite", ".sqlite3"] # additional extensions to skip entropy checks
 signatures:
   - part:  'extension'
