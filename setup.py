@@ -4,7 +4,7 @@ setuptools.setup(
     # How you named your package folder (MyLib)
     name='tell_me_your_secrets',
     packages=setuptools.find_packages(),
-    version='1.62',      # Start with a small number and increase it with every change you make
+    version='1.63',      # Start with a small number and increase it with every change you make
     # Chose a license from here: https://help.github.com/articles/licensing-a-repository
     license='MIT',
     # Give a short description about your library
