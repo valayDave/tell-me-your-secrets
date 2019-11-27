@@ -24,7 +24,13 @@ A simple module which finds files with different secrets keys present inside a d
 
 ## Module Usage
 
-- ``tell-me-your-secrets [-h] [-c CONFIG_PATH] [-w WRITE_PATH] <SEARCH_PATH>``
+- ``tell-me-your-secrets [-h] [-c CONFIG_PATH] [-w WRITE_PATH] [-f FILTER [FILTER ...]] <SEARCH_PATH>``
+
+## Usage Examples 
+
+- ``tell-me-your-secrets -c new_config.yml /home`` : Find secrets in the home directory according to the provided config file. ``config.yml`` structure provided in the next section. 
+
+- ``tell-me-your-secrets /home -f aws microsoft crypto digitalocean ssh sql google`` : Will use the [default config](https://github.com/valayDave/tell-me-your-secrets/blob/master/tell_me_your_secrets/config.yml) and filter signatures according to those keywords.  
 
 ## Module Configuration
 
@@ -44,6 +50,7 @@ signatures: # list of signatures to check
 ## Contributing
 
 - Fork and branch based PR. 
+- Open to integrate new signatures if you send a PR. 
 
 ## Module Inspiration
 

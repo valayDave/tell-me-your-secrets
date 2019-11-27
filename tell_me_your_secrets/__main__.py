@@ -1,36 +1,47 @@
 import yaml
 import os
 import abc
-import pathlib # For Python 3.4.. TODO : Check for this. 
 from .defaults import *
 from .logger import create_logger,logging
+from .utils import *
 import re
 from pandas import DataFrame
 import datetime
 import argparse
 import sys
+import functools
 
+config_names = col_print('Available Signatures : \n',AVAILABLE_NAMES,COL_PRINT_WIDTH)
 
 module_description = '''
-Sniff My Secrets
+Tell Me Your Secrets
 
 Finds presence of secret files from lots of know signatures for a given folder path. 
 
 This module can be potentially be used to find secrets accross the Linux systems
 
-'''
+{config_names}
+
+To use only some of the available signatures use the -f option. 
+
+Examples usage : 
+
+tell-me-your-secrets <PATH_TO_FOLDER> -f aws microsoft crypto digitalocean ssh sql google
+
+'''.format(config_names=config_names)
 arguement_parser = argparse.ArgumentParser(description=module_description)
 arguement_parser.formatter_class = argparse.RawDescriptionHelpFormatter
 arguement_parser.add_argument('search_path',help='The Root Directory From which the Search for the Key/Pem files is initiated')
 arguement_parser.add_argument('-c','--config',help='Path To Another config.yml for Extracting The Data')
 arguement_parser.add_argument('-w','--write',help='Path of the csv File to which results are written')
+arguement_parser.add_argument('-f','--filter',help='Filter the Signatures you want to apply. ',nargs='+')
 
 module_logger = create_logger(MODULE_NAME,level=logging.INFO)
 
 # Options
     # --path <PATH>: Checks Signatures in the Path.
     # --config <CONFIG_PATH>: path to config or default config.yml is used. 
-    
+    # --filter <filter1> <filter2> ... : For filtering only certian signatures for application. 
 # Process:
 #   - Import Config.yml or Use the one From defaults. 
 #   - Import the path if provided Or use Paths from the Defaults.: These Should be according to the OS(Can be in later Versions. Currently for Ubuntu)     
@@ -40,15 +51,6 @@ module_logger = create_logger(MODULE_NAME,level=logging.INFO)
 #   - Extract FILTERED Files from the Path 
 #   - Run the FILTERED Files through signatures. 
 
-
-def find_extension(file_path):
-    return pathlib.Path(file_path).suffix
-
-def get_file_data(file_path):
-    f = open(file_path,encoding = "ISO-8859-1")
-    data = f.read()
-    f.close()
-    return data
 
 class Signature(metaclass=abc.ABCMeta):
     def __init__(self,part,name,signature):
@@ -109,7 +111,7 @@ class SimpleMatch(Signature):
 
 
 class SignatureRecognizer:
-    def __init__(self,config_object,path,print_results=VERBOSE_OUTPUT,write_results=SAVE_ON_COMPLETE,output_path=DEFAULT_OUTPUT_PATH):
+    def __init__(self,config_object,path,print_results=VERBOSE_OUTPUT,write_results=SAVE_ON_COMPLETE,output_path=DEFAULT_OUTPUT_PATH,user_filters=[]):
         self.config = config_object # todo: Fix this Later. 
         self.path = path
         self.blacklisted_extensions = config_object['blacklisted_extensions']
@@ -122,23 +124,32 @@ class SignatureRecognizer:
         self.print_results = print_results
         self.signatures = []
         self.matched_signatures = []
+        self.user_filters= user_filters
         self.output_path = output_path
         # $ Make Configuration Objects For each of the Signatures in the Config Object.
         self.load_config()
-        module_logger.info('Secret Sniffer Initailsed For Path  : %s',path)
+        module_logger.info('Secret Sniffer Initailsed For Path  : %s\n',path)
 
     # $ Create the signature objects over here. 
     def load_config(self):
+        chosen_configs = []
         for signature_obj in self.config['signatures']:
             # $ Ignore Object if no Name/Part.
             if 'name' not in signature_obj or 'part' not in signature_obj:
                 continue
+            if len(self.user_filters) > 0:
+                if len([filtered_val for filtered_val in self.user_filters if str(filtered_val).lower() in str(signature_obj['name']).lower()]) == 0:
+                    continue
             if 'match' in signature_obj:
                 self.signatures.append(SimpleMatch(signature_obj['part'],signature_obj['name'],signature_obj['match']))
             elif 'regex' in signature_obj:
                 self.signatures.append(RegexSignature(signature_obj['part'],signature_obj['name'],signature_obj['regex']))
             else:
                 module_logger.warn('No Match Method Of Access %s',self.name)
+            chosen_configs.append(signature_obj['name']+" In File "+signature_obj['part'])
+        
+        if len(self.user_filters) > 0:
+            module_logger.info('Applying Filtered Signatures : \n\n\t%s\n','\n\t'.join(chosen_configs))
     
     def create_matched_signature_object(self,name,part,file_path):
         return {
@@ -216,12 +227,12 @@ class SignatureRecognizer:
         return f
 
     
-def init_signature(config,path,write_path):
+def init_signature(config,path,write_path,user_filters):
     # $ todo : Create the signature Object with the methods that
     if write_path is None:
-        return SignatureRecognizer(config,path)
+        return SignatureRecognizer(config,path,user_filters=user_filters)
     else:
-        return SignatureRecognizer(config,path,write_results=True,output_path=write_path)
+        return SignatureRecognizer(config,path,write_results=True,output_path=write_path,user_filters=user_filters)
 
 # $ Gets all subpaths for the directory. 
 
@@ -233,10 +244,7 @@ def run_service():
     if parsed_arguements.config is not None:
         config_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguements.config)))
 
-    search_path =  os.path.abspath(os.path.join(os.path.abspath(sys.path[0])))
-    if parsed_arguements.search_path != '.':
-        search_path =  os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguements.search_path)))
-    
+    search_path =  os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguements.search_path)))
     module_logger.debug('Running Config From Path : %s',config_path)
     f = open(config_path)
     config = yaml.load(f,Loader=yaml.FullLoader)
@@ -246,8 +254,13 @@ def run_service():
     if parsed_arguements.write is not None:
         write_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguements.write)))
     
-    # $ todo : Extract FILTERED Files from the Path 
-    sig_recognizer = init_signature(config,search_path,write_path)
+    user_filters = []
+    if parsed_arguements.filter is not None:
+        user_filters = parsed_arguements.filter
+
+    # print(parsed_arguements)
+    # $  Extract FILTERED Files from the Path 
+    sig_recognizer = init_signature(config,search_path,write_path,user_filters)
     sig_recognizer.find_vulnerable_files()
     
 
