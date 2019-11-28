@@ -1,23 +1,22 @@
 import setuptools
+with open("Readme.md", "r") as fh:
+    long_description = fh.read()
 
 setuptools.setup(
-    # How you named your package folder (MyLib)
     name='tell_me_your_secrets',
     packages=setuptools.find_packages(),
-    version='1.70',      # Start with a small number and increase it with every change you make
-    # Chose a license from here: https://help.github.com/articles/licensing-a-repository
+    version='1.71',      
     license='MIT',
-    # Give a short description about your library
     description='A simple module which finds files with different secrets keys present inside a directory. Secrets derived from 120 different signatures.',
-    author='Valay Dave',                   # Type in your name
+    author='Valay Dave',                   
     include_package_data=True,
-    author_email='valaygaurang@gmail.com',      # Type in your E-Mail
-    # Provide either the link to your github or to your website
+    author_email='valaygaurang@gmail.com', 
     url='https://github.com/valayDave/tell-me-your-secrets',
-    
+    long_description=long_description,
+   long_description_content_type="text/markdown",
     # Keywords that define your package best
     keywords=['Security', 'SSH', 'Secret Keys', 'SysAdmin'],
-    install_requires=[            # I get to this in a second
+    install_requires=[            
         'pyyaml',
         'pandas',
     ],
@@ -28,7 +27,6 @@ setuptools.setup(
     classifiers=[
         # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
         'Development Status :: 4 - Beta',
-        # Define that your audience are developers
         'Intended Audience :: Developers',
         'Topic :: Security',
         'Topic :: System :: Systems Administration',
