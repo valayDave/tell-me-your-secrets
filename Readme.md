@@ -26,6 +26,8 @@ A simple module which finds files with different secrets keys present inside a d
 
 - ``tell-me-your-secrets [-h] [-c CONFIG_PATH] [-w WRITE_PATH] [-f FILTER [FILTER ...]] <SEARCH_PATH>``
 
+![](Resources/output_example.gif)
+
 ## Usage Examples 
 
 - ``tell-me-your-secrets -c new_config.yml /home`` : Find secrets in the home directory according to the provided config file. ``config.yml`` structure provided in the next section. 
