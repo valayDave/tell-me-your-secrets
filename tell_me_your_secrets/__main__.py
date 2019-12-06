@@ -159,11 +159,14 @@ class SignatureRecognizer:
         }
     
     def find_vulnerable_files(self):
-        # $ todo
         filtered_files = self.get_files(self.path)
         for possible_compromised_path in filtered_files:
+            # $ todo : Create more modular processing of files. 
+            # $ todo : Create a threaded version of the processing of files
             # module_logger.debug("Opening File : %s",possible_compromised_path)
             file_content = get_file_data(possible_compromised_path)
+            if file_content is None:
+                continue
             # $ Run the Signature Checking Engine over here For different Pattern Signatures. 
             signature_name,signature_part = self.run_signatures(possible_compromised_path,file_content)
             if signature_name is not None:

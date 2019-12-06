@@ -21,7 +21,10 @@ def find_extension(file_path):
     return pathlib.Path(file_path).suffix
 
 def get_file_data(file_path):
-    f = open(file_path,encoding = "ISO-8859-1")
-    data = f.read()
-    f.close()
-    return data
+    try:
+        f = open(file_path,encoding = "ISO-8859-1")
+        data = f.read()
+        f.close()
+        return data
+    except:
+        return None
