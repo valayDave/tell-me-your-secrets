@@ -257,6 +257,8 @@ def run_service():
     with open(config_path) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 
+    module_logger.debug(f'Config contents: {config}')
+
     write_path = None
     if parsed_arguments.write is not None:
         write_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]), os.path.abspath(parsed_arguments.write)))
