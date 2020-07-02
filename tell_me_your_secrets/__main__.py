@@ -79,7 +79,7 @@ class RegexSignature(Signature):
         elif self.part == 'path':
             compare_variable = file_path
         else:
-            module_logger.warn('Unrecognised File Part Access %s',self.name)
+            module_logger.warn(f'Unrecognised File Part Access {self.name}')
             return False
 
         return self.regex.search(compare_variable) != None
@@ -103,7 +103,7 @@ class SimpleMatch(Signature):
         elif self.part == 'path':
             compare_variable = file_path
         else:
-            module_logger.warn('Unrecognised File Part Access %s',self.name)
+            module_logger.warn(f'Unrecognised File Part Access {self.name}')
         
         return compare_variable == self.signature
 
@@ -125,7 +125,7 @@ class SignatureRecognizer:
         self.output_path = output_path
         # $ Make Configuration Objects For each of the Signatures in the Config Object.
         self.load_config()
-        module_logger.info('Secret Sniffer Initailsed For Path  : %s\n',path)
+        module_logger.info(f'Secret Sniffer Initialised For Path: {path}')
 
     # $ Create the signature objects over here. 
     def load_config(self):
@@ -142,7 +142,7 @@ class SignatureRecognizer:
             elif 'regex' in signature_obj:
                 self.signatures.append(RegexSignature(signature_obj['part'],signature_obj['name'],signature_obj['regex']))
             else:
-                module_logger.warn('No Match Method Of Access %s',self.name)
+                module_logger.warn(f'No Match Method Of Access')
             chosen_configs.append(signature_obj['name']+" In File "+signature_obj['part'])
         
         if len(self.user_filters) > 0:
@@ -160,18 +160,20 @@ class SignatureRecognizer:
         for possible_compromised_path in filtered_files:
             # $ todo : Create more modular processing of files. 
             # $ todo : Create a threaded version of the processing of files
-            # module_logger.debug("Opening File : %s",possible_compromised_path)
+            module_logger.debug(f'Opening File : {possible_compromised_path}')
             file_content = get_file_data(possible_compromised_path)
             if file_content is None:
                 continue
             # $ Run the Signature Checking Engine over here For different Pattern Signatures. 
             signature_name,signature_part = self.run_signatures(possible_compromised_path,file_content)
             if signature_name is not None:
-                self.matched_signatures.append(self.create_matched_signature_object(signature_name,signature_part,possible_compromised_path))
+                self.matched_signatures.append(self.create_matched_signature_object(signature_name, signature_part,
+                                                                                    possible_compromised_path))
                 if self.print_results:
-                    module_logger.info('Signature Matched : %s | On Part : %s | With File : %s',signature_name,signature_part,possible_compromised_path)
+                    module_logger.info(f'Signature Matched : {signature_name} | On Part : {signature_part} | With '
+                                       f'File : {possible_compromised_path}')
 
-        module_logger.info("Found %d Matches from the Path %s",len(self.matched_signatures),self.path)
+        module_logger.info(f'Found {len(self.matched_signatures)} matches from the path {self.path}')
         if self.write_results:
             self.write_results_to_file()
     
@@ -182,9 +184,8 @@ class SignatureRecognizer:
                 self.output_path+='.csv'
             file_name = self.output_path
             write_df.to_csv(file_name)
-            module_logger.info('Completed Writing Results to File : %s',self.output_path)
-            
-    
+            module_logger.info(f'Completed Writing Results to File : {self.output_path}')
+
     def run_signatures(self,file_path,content):
         for signature in self.signatures:
             match_result = signature.match(file_path,content)
