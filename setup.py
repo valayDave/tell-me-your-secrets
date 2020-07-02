@@ -3,7 +3,7 @@ with open("Readme.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='tell_me_your_secrets',
+    name='tell_me_your_secrets_tmp',
     packages=setuptools.find_packages(),
     version='1.74',      
     license='MIT',
