@@ -227,12 +227,12 @@ class SignatureRecognizer:
         return f
 
     
-def init_signature(config: dict, path, write_path, user_filters):
+def init_signature(config: dict, path: str, write_path: str, user_filters: list):
     # $ todo : Create the signature Object with the methods that
-    if write_path is None:
-        return SignatureRecognizer(config, path, user_filters=user_filters)
-    else:
+    if write_path:
         return SignatureRecognizer(config, path, write_results=True, output_path=write_path, user_filters=user_filters)
+
+    return SignatureRecognizer(config, path, user_filters=user_filters)
 
 # $ Gets all subpaths for the directory. 
 
