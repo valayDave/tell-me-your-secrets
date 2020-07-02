@@ -6,7 +6,7 @@ ch.setLevel(logging.INFO)
 ch.setFormatter(formatter)
 
 
-def create_logger(logger_name:str,level=logging.INFO):
+def create_logger(logger_name: str, level: str = logging.INFO):
     custom_logger = logging.getLogger(logger_name)
     if level != logging.INFO:
         ch1 = logging.StreamHandler()
