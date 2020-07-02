@@ -35,7 +35,7 @@ arguement_parser.add_argument('-w','--write',help='Path of the csv File to which
 arguement_parser.add_argument('-f','--filter',help='Filter the Signatures you want to apply. ',nargs='+')
 arguement_parser.add_argument('-v','--verbose',help='Enable debug level logging. ', action='store_true')
 
-module_logger = create_logger(MODULE_NAME, level=logging.INFO)
+module_logger = create_logger(MODULE_NAME)
 
 # Options
     # --path <PATH>: Checks Signatures in the Path.
