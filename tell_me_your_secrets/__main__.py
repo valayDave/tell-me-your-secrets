@@ -33,7 +33,7 @@ arguement_parser.add_argument('search_path',help='The Root Directory From which 
 arguement_parser.add_argument('-c','--config',help='Path To Another config.yml for Extracting The Data')
 arguement_parser.add_argument('-w','--write',help='Path of the csv File to which results are written')
 arguement_parser.add_argument('-f','--filter',help='Filter the Signatures you want to apply. ',nargs='+')
-arguement_parser.add_argument('-v','--verbose',help='If provided will enable debug logging. ', action='store_true')
+arguement_parser.add_argument('-v','--verbose',help='Enable debug level logging. ', action='store_true')
 
 module_logger = create_logger(MODULE_NAME, level=logging.INFO)
 
