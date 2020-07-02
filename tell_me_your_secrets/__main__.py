@@ -252,12 +252,12 @@ def run_service():
         config_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguments.config)))
 
     search_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguments.search_path)))
-    module_logger.debug(f'Running Config From Path : {config_path}')
+    module_logger.debug(f'Running config from path: {config_path}')
 
     with open(config_path) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 
-    module_logger.debug(f'Config contents: {config}')
+    module_logger.debug(f'Config contents: \n{config}')
 
     write_path = None
     if parsed_arguments.write is not None:
