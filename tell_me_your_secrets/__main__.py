@@ -35,6 +35,7 @@ arguement_parser.add_argument('search_path',help='The Root Directory From which 
 arguement_parser.add_argument('-c','--config',help='Path To Another config.yml for Extracting The Data')
 arguement_parser.add_argument('-w','--write',help='Path of the csv File to which results are written')
 arguement_parser.add_argument('-f','--filter',help='Filter the Signatures you want to apply. ',nargs='+')
+arguement_parser.add_argument('-e','--exit',help='Exit non-zero on results found. ',action='store_true')
 
 module_logger = create_logger(MODULE_NAME,level=logging.INFO)
 
@@ -240,9 +241,9 @@ def init_signature(config,path,write_path,user_filters):
 # $ Gets all subpaths for the directory. 
 
 
-def run_service():
+def run_service(parsed_arguements) -> bool:
     # $ todo : Import Config.yml or Use the one From defaults. 
-    parsed_arguements = arguement_parser.parse_args()
+
     config_path = DEFAULT_CONFIG_PATH
     if parsed_arguements.config is not None:
         config_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguements.config)))
@@ -265,8 +266,17 @@ def run_service():
     # $  Extract FILTERED Files from the Path 
     sig_recognizer = init_signature(config,search_path,write_path,user_filters)
     sig_recognizer.find_vulnerable_files()
+
+    return len(sig_recognizer.matched_signatures) > 0
     
 
 if __name__ == '__main__':
-    run_service()
+    parsed_arguments = arguement_parser.parse_args()
+
+    has_matches = run_service(parsed_arguments)
+
+    if has_matches and parsed_arguments.exit:
+        exit(1)
+
+    exit(0)
 # $ Move Signature.go and Match.go into this to make this work. 
