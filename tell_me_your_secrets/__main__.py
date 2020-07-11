@@ -53,13 +53,13 @@ module_logger = create_logger(MODULE_NAME)
 
 
 class Signature(metaclass=abc.ABCMeta):
-    def __init__(self,part,name,signature):
+    def __init__(self, part: str, name: str, signature: str):
         self.part = part
         self.name = name
         self.signature = signature
     
     @abc.abstractmethod
-    def match(self, file_path,file_content) -> bool:
+    def match(self, file_path: str, file_content: str) -> bool:
         """Match Input of the With Signature of the part and Signature and Type of matching."""
         raise NotImplemented
 
@@ -69,7 +69,7 @@ class RegexSignature(Signature):
         super().__init__(part, name,signature)
         self.regex = re.compile(self.signature)
           
-    def match(self, file_path,file_content) -> bool:
+    def match(self, file_path: str, file_content: str) -> bool:
         compare_variable = None
         if self.part == 'extension':
             compare_variable = find_extension(file_path)
@@ -90,8 +90,8 @@ class RegexSignature(Signature):
 
 
 class SimpleMatch(Signature):
-    def __init__(self, part, name,signature):
-        super().__init__(part, name,signature)
+    def __init__(self, part: str, name: str, signature: str):
+        super().__init__(part, name, signature)
 
     def match(self, file_path,file_content) -> bool:
         compare_variable = None
