@@ -6,6 +6,7 @@ from .utils import *
 import re
 from pandas import DataFrame
 import argparse
+from typing import Tuple
 import sys
 
 
@@ -34,7 +35,7 @@ arguement_parser.add_argument('-c','--config',help='Path To Another config.yml f
 arguement_parser.add_argument('-w','--write',help='Path of the csv File to which results are written')
 arguement_parser.add_argument('-f','--filter',help='Filter the Signatures you want to apply. ',nargs='+')
 arguement_parser.add_argument('-v','--verbose',help='Enable debug level logging. ', action='store_true')
-
+arguement_parser.add_argument('-e','--exit',help='Exit non-zero on results found. ',action='store_true')
 module_logger = create_logger(MODULE_NAME)
 
 # Options
@@ -238,10 +239,9 @@ def init_signature(config: dict, path: str, write_path: str, user_filters: list)
 # $ Gets all subpaths for the directory. 
 
 
-def run_service():
+def run_service() -> Tuple[bool,bool]:
     # $ todo : Import Config.yml or Use the one From defaults. 
     parsed_arguments = arguement_parser.parse_args()
-
     if parsed_arguments.verbose:
         module_logger.setLevel(logging.DEBUG)
         module_logger.handlers[0].setLevel(logging.DEBUG)
@@ -271,8 +271,14 @@ def run_service():
     # $  Extract FILTERED Files from the Path
     sig_recognizer = init_signature(config, search_path, write_path, user_filters)
     sig_recognizer.find_vulnerable_files()
+
+    return len(sig_recognizer.matched_signatures) > 0 , parsed_arguments.exit
     
 
 if __name__ == '__main__':
-    run_service()
+    has_matches,exit_val = run_service()
+    if has_matches and exit_val:
+        exit(1)
+
+    exit(0)
 # $ Move Signature.go and Match.go into this to make this work. 
