@@ -1,7 +1,9 @@
 *.pem
 .env/
+.venv/
 __pycache__
 .vscode/
+.idea/
 *.go
 *.csv
 Output/
