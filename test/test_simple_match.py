@@ -17,3 +17,27 @@ class SimpleMatchTest(unittest.TestCase):
         mock_find_extension.return_value = '.jpg'
         match = SimpleMatch('extension', 'Potential cryptographic private key', '.pem')
         self.assertFalse(match.match('/path/to/no/pem', ''))
+
+    def test_simple_match_filename_match(self):
+        match = SimpleMatch('filename', 'Ruby On Rails secret token configuration file', 'secret_token.rb')
+        self.assertTrue(match.match('/path/to/secret_token.rb', ''))
+
+    def test_simple_match_filename_no_match(self):
+        match = SimpleMatch('filename', 'Ruby On Rails secret token configuration file', 'secret_token.rb')
+        self.assertFalse(match.match('/path/to/non_secret_token.rb', ''))
+
+    def test_simple_match_contents_match(self):
+        match = SimpleMatch('contents', 'Sample content match', 'abcdef')
+        self.assertTrue(match.match('/path/to/file', 'abcdef'))
+
+    def test_simple_match_contents_no_match(self):
+        match = SimpleMatch('contents', 'Sample content match', 'abcdef')
+        self.assertFalse(match.match('/path/to/file', 'xyz'))
+
+    def test_simple_match_path_match(self):
+        match = SimpleMatch('path', 'Sample path match', '/path/to/secret')
+        self.assertTrue(match.match('/path/to/secret', ''))
+
+    def test_simple_match_path_no_match(self):
+        match = SimpleMatch('path', 'Sample path match', '/path/to/secret')
+        self.assertFalse(match.match('/path/to/no_secret', ''))
