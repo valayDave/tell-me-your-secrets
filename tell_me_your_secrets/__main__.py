@@ -63,10 +63,13 @@ class Signature(metaclass=abc.ABCMeta):
         """Match Input of the With Signature of the part and Signature and Type of matching."""
         raise NotImplemented
 
+    def __str__(self):
+        return f'Type:{self.__class__} Name:{self.name} Part:{self.part}: Signature:{self.signature}'
+
 
 class RegexSignature(Signature):
-    def __init__(self, part, name,signature):
-        super().__init__(part, name,signature)
+    def __init__(self, part: str, name: str, signature: str):
+        super().__init__(part, name, signature)
         self.regex = re.compile(self.signature)
           
     def match(self, file_path: str, file_content: str) -> bool:
@@ -84,9 +87,6 @@ class RegexSignature(Signature):
             return False
 
         return self.regex.search(compare_variable) != None
-    
-    def __str__(self):
-        return self.name + ' : ' + self.part + ' : Regex : '+ self
 
 
 class SimpleMatch(Signature):
@@ -276,6 +276,13 @@ def run_service() -> Tuple[bool,bool]:
     
 
 if __name__ == '__main__':
+
+    ex = SimpleMatch('hello', 'world', 'abc')
+
+    print(ex)
+
+    exit(0)
+
     has_matches,exit_val = run_service()
     if has_matches and exit_val:
         exit(1)

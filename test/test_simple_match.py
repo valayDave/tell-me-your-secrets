@@ -41,3 +41,8 @@ class SimpleMatchTest(unittest.TestCase):
     def test_simple_match_path_no_match(self):
         match = SimpleMatch('path', 'Sample path match', '/path/to/secret')
         self.assertFalse(match.match('/path/to/no_secret', ''))
+
+    def test_simple_match_str(self):
+        match = SimpleMatch('Part', 'Name ', 'Sig')
+        self.assertEqual("Type:<class 'tell_me_your_secrets.__main__.SimpleMatch'> Name:Name  Part:Part: Signature:Sig",
+                         str(match))
