@@ -114,13 +114,13 @@ class SimpleMatch(Signature):
 
 
 class SignatureRecognizer:
-    def __init__(self, config_object: dict, path: str, use_gitignore: bool, print_results=VERBOSE_OUTPUT,
+    def __init__(self, config_object: dict, search_path: str, use_gitignore: bool, print_results=VERBOSE_OUTPUT,
                  write_results=SAVE_ON_COMPLETE, output_path=DEFAULT_OUTPUT_PATH, user_filters: list = []):
         self.config = config_object  # todo: Fix this Later.
-        self.path = path
+        self.search_path = search_path
         self.use_gitignore = use_gitignore
         if use_gitignore:
-            gitignore_file = os.path.join(path, '.gitignore')
+            gitignore_file = os.path.join(search_path, '.gitignore')
             if os.path.exists(gitignore_file):
                 module_logger.debug(f'Using gitignore file: {gitignore_file}')
                 self.gitignore_matcher = parse_gitignore(gitignore_file)
@@ -136,7 +136,7 @@ class SignatureRecognizer:
         self.output_path = output_path
         # $ Make Configuration Objects For each of the Signatures in the Config Object.
         self.load_config()
-        module_logger.info(f'Secret Sniffer Initialised For Path: {path}')
+        module_logger.info(f'Secret Sniffer Initialised For Path: {search_path}')
 
     # $ Create the signature objects over here. 
     def load_config(self):
@@ -167,7 +167,7 @@ class SignatureRecognizer:
         }
     
     def find_vulnerable_files(self):
-        filtered_files = self.get_files(self.path)
+        filtered_files = self.get_files(self.search_path)
         for possible_compromised_path in filtered_files:
             # $ todo : Create more modular processing of files. 
             # $ todo : Create a threaded version of the processing of files
@@ -184,7 +184,7 @@ class SignatureRecognizer:
                     module_logger.info(f'Signature Matched : {signature_name} | On Part : {signature_part} | With '
                                        f'File : {possible_compromised_path}')
 
-        module_logger.info(f'Found {len(self.matched_signatures)} matches from the path {self.path}')
+        module_logger.info(f'Found {len(self.matched_signatures)} matches from the search_path {self.search_path}')
         if self.write_results:
             self.write_results_to_file()
     
@@ -237,14 +237,13 @@ class SignatureRecognizer:
 
         if self.gitignore_check(dir_path):
             module_logger.debug(f'Skipping path {dir_path} due to gitignored')
-
             return False
 
         return True
 
-    def get_files(self, path: str) -> list:
+    def get_files(self, search_path: str) -> list:
         f = []
-        for (dir_path, dir_names, filenames) in os.walk(path):
+        for (dir_path, dir_names, filenames) in os.walk(search_path):
             # Todo : Over here the Engine Will Test for the Different Types and other things. 
             if not self.check_accepted_path(dir_path):
                 continue
@@ -253,13 +252,13 @@ class SignatureRecognizer:
         return f
 
     
-def init_signature(config: dict, path: str, write_path: str, user_filters: list, use_gitignore: bool):
+def init_signature(config: dict, search_path: str, write_path: str, user_filters: list, use_gitignore: bool):
     # $ todo : Create the signature Object with the methods that
     if write_path:
-        return SignatureRecognizer(config, path, use_gitignore, write_results=True, output_path=write_path,
+        return SignatureRecognizer(config, search_path, use_gitignore, write_results=True, output_path=write_path,
                                    user_filters=user_filters)
 
-    return SignatureRecognizer(config, path, use_gitignore, user_filters=user_filters)
+    return SignatureRecognizer(config, search_path, use_gitignore, user_filters=user_filters)
 
 # $ Gets all subpaths for the directory. 
 
