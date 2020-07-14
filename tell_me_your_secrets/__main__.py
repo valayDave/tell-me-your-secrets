@@ -120,7 +120,10 @@ class SignatureRecognizer:
         self.path = path
         self.use_gitignore = use_gitignore
         if use_gitignore:
-            self.gitignore_matcher = parse_gitignore(os.path.join(path, '.gitignore'))
+            gitignore_file = os.path.join(path, '.gitignore')
+            if os.path.exists(gitignore_file):
+                module_logger.debug(f'Using gitignore file: {gitignore_file}')
+                self.gitignore_matcher = parse_gitignore(gitignore_file)
         self.blacklisted_extensions = config_object.get('blacklisted_extensions', [])
         self.blacklisted_paths = [path.format(sep=os.path.sep) for path in config_object['blacklisted_paths']]
         self.red_flag_extensions = config_object.get('red_flag_extensions', [])
