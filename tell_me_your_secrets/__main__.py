@@ -229,7 +229,7 @@ class SignatureRecognizer:
             return False
 
     def gitignore_check(self, matcher: str) -> bool:
-        return self.use_gitignore and not self.gitignore_matcher(matcher)
+        return self.use_gitignore and self.gitignore_matcher(matcher)
 
     def is_ignored_path(self, dir_path: str) -> bool:
         if len([matched_path for matched_path in self.blacklisted_paths if matched_path in dir_path]) > 0:
