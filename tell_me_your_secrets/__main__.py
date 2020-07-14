@@ -231,25 +231,26 @@ class SignatureRecognizer:
     def gitignore_check(self, matcher: str) -> bool:
         return self.use_gitignore and not self.gitignore_matcher(matcher)
 
-    def check_accepted_path(self, dir_path: str) -> bool:
+    def is_ignored_path(self, dir_path: str) -> bool:
         if len([matched_path for matched_path in self.blacklisted_paths if matched_path in dir_path]) > 0:
-            return False
+            return True
 
         if self.gitignore_check(dir_path):
             module_logger.debug(f'Skipping path {dir_path} due to gitignored')
-            return False
+            return True
 
-        return True
+        return False
 
     def get_files(self, search_path: str) -> list:
-        f = []
+        files = []
         for (dir_path, dir_names, filenames) in os.walk(search_path):
             # Todo : Over here the Engine Will Test for the Different Types and other things. 
-            if not self.check_accepted_path(dir_path):
+            if self.is_ignored_path(dir_path):
                 continue
+
             adding_files = [os.path.abspath(os.path.join(dir_path,file)) for file in filenames if not self.check_skippable_file(os.path.abspath(os.path.join(dir_path,file)))]
-            f.extend(adding_files)
-        return f
+            files.extend(adding_files)
+        return files
 
     
 def init_signature(config: dict, search_path: str, write_path: str, user_filters: list, use_gitignore: bool):
