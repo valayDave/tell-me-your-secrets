@@ -212,6 +212,7 @@ class SignatureRecognizer:
             return False
 
         if self.gitignore_check(file_path):
+            module_logger.debug(f'Skipping file {file_path} due to gitignored')
             return True
 
         # $ Check if if File is is in blacklisted extension
@@ -235,6 +236,8 @@ class SignatureRecognizer:
             return False
 
         if self.gitignore_check(dir_path):
+            module_logger.debug(f'Skipping path {dir_path} due to gitignored')
+
             return False
 
         return True
