@@ -75,7 +75,7 @@ class RegexSignature(Signature):
     def match(self, file_path: str, file_content: str) -> bool:
         compare_variable = None
         if self.part == 'extension':
-            compare_variable = find_extension(file_path)
+            compare_variable = find_extension(file_path)[1:]
         elif self.part == 'filename':
             compare_variable = file_path.split(os.path.sep)[-1]
         elif self.part == 'contents':
