@@ -276,13 +276,6 @@ def run_service() -> Tuple[bool,bool]:
     
 
 if __name__ == '__main__':
-
-    ex = SimpleMatch('hello', 'world', 'abc')
-
-    print(ex)
-
-    exit(0)
-
     has_matches,exit_val = run_service()
     if has_matches and exit_val:
         exit(1)
