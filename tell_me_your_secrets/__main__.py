@@ -86,7 +86,7 @@ class RegexSignature(Signature):
             module_logger.warning(f'Unrecognised File Part Access {self.name}')
             return False
 
-        return self.regex.search(compare_variable) != None
+        return self.regex.search(compare_variable) is not None
 
 
 class SimpleMatch(Signature):
