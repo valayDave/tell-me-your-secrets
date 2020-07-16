@@ -63,3 +63,8 @@ PiZodLoJ21/7Ph35BYzS43dtL7IrLAP/TarvYbeg
         signature = RegexSignature('path', 'GitHub Hub command-line client configuration file', 'config/hub$')
         self.assertFalse(signature.match('/path/to/config/hub/more', ''))
         self.assertFalse(signature.match('/path/to/confi/hub', ''))
+
+    def test_invalid(self):
+        signature = RegexSignature('random', 'Random', '')
+        self.assertFalse(signature.match('', ''))
+

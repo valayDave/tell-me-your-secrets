@@ -46,3 +46,7 @@ class SimpleMatchTest(unittest.TestCase):
         simple_match = SimpleMatch('Part', 'Name ', 'Sig')
         self.assertEqual("Type:<class 'tell_me_your_secrets.__main__.SimpleMatch'> Name:Name  Part:Part: Signature:Sig",
                          str(simple_match))
+
+    def test_invalid(self):
+        simple_match = SimpleMatch('unmapped', 'something ', '')
+        self.assertFalse(simple_match.match('', ''))
