@@ -1,21 +1,28 @@
-import yaml
 import abc
 
 from gitignore_parser import parse_gitignore
 
-from .defaults import *
-from .logger import create_logger, logging
-from .utils import *
-import re
-from pandas import DataFrame
 import argparse
-from typing import Tuple
+import logging
+import os
+import re
 import sys
+from typing import Tuple
 
+import yaml
+from pandas import DataFrame
 
-config_names = col_print('Available Signatures : \n',AVAILABLE_NAMES,COL_PRINT_WIDTH)
+from tell_me_your_secrets.defaults import (DEFAULT_CONFIG_PATH,
+                                           DEFAULT_OUTPUT_PATH, MAX_FILE_SIZE,
+                                           MODULE_NAME, SAVE_ON_COMPLETE,
+                                           VERBOSE_OUTPUT)
+from tell_me_your_secrets.logger import create_logger
+from tell_me_your_secrets.utils import (col_print, find_extension,
+                                        get_available_names, get_file_data)
 
-module_description = '''
+config_names = col_print('Available Signatures : \n', get_available_names())
+
+module_description = f'''
 Tell Me Your Secrets
 
 Finds presence of secret files from lots of know signatures for a given folder path. 
@@ -30,16 +37,16 @@ Examples usage :
 
 tell-me-your-secrets <PATH_TO_FOLDER> -f aws microsoft crypto digitalocean ssh sql google
 
-'''.format(config_names=config_names)
-argument_parser = argparse.ArgumentParser(description=module_description)
-argument_parser.formatter_class = argparse.RawDescriptionHelpFormatter
-argument_parser.add_argument('search_path', help='The Root Directory From which the Search for the Key/Pem files is initiated')
-argument_parser.add_argument('-c', '--config', help='Path To Another config.yml for Extracting The Data')
-argument_parser.add_argument('-w', '--write', help='Path of the csv File to which results are written')
-argument_parser.add_argument('-f', '--filter', help='Filter the Signatures you want to apply. ', nargs='+')
-argument_parser.add_argument('-v', '--verbose', help='Enable debug level logging. ', action='store_true')
-argument_parser.add_argument('-e', '--exit', help='Exit non-zero on results found. ', action='store_true')
-argument_parser.add_argument('-g', '--gitignore', help='Ignore .gitignore mapped objects. ', action='store_true')
+'''
+arguement_parser = argparse.ArgumentParser(description=module_description)
+arguement_parser.formatter_class = argparse.RawDescriptionHelpFormatter
+arguement_parser.add_argument('search_path',help='The Root Directory From which the Search for the Key/Pem files is initiated')
+arguement_parser.add_argument('-c','--config',help='Path To Another config.yml for Extracting The Data')
+arguement_parser.add_argument('-w','--write',help='Path of the csv File to which results are written')
+arguement_parser.add_argument('-f','--filter',help='Filter the Signatures you want to apply. ',nargs='+')
+arguement_parser.add_argument('-v','--verbose',help='Enable debug level logging. ', action='store_true')
+arguement_parser.add_argument('-e','--exit',help='Exit non-zero on results found. ',action='store_true')
+arguement_parser.add_argument('-g', '--gitignore', help='Ignore .gitignore mapped objects. ', action='store_true')
 module_logger = create_logger(MODULE_NAME)
 
 # Options
@@ -252,7 +259,7 @@ class SignatureRecognizer:
             files.extend(adding_files)
         return files
 
-    
+
 def init_signature(config: dict, search_path: str, write_path: str, user_filters: list, use_gitignore: bool):
     # $ todo : Create the signature Object with the methods that
     if write_path:
@@ -266,7 +273,7 @@ def init_signature(config: dict, search_path: str, write_path: str, user_filters
 
 def run_service() -> Tuple[bool,bool]:
     # $ todo : Import Config.yml or Use the one From defaults. 
-    parsed_arguments = argument_parser.parse_args()
+    parsed_arguments = arguement_parser.parse_args()
     if parsed_arguments.verbose:
         module_logger.setLevel(logging.DEBUG)
         module_logger.handlers[0].setLevel(logging.DEBUG)
@@ -282,7 +289,6 @@ def run_service() -> Tuple[bool,bool]:
 
     with open(config_path) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
-
     module_logger.debug(f'Config contents: \n{config}')
 
     write_path = None
