@@ -17,7 +17,7 @@ def col_print(title, array, term_width=150, pad_size=1):
     )
 
 
-def find_extension(file_path):
+def find_extension(file_path: str) -> str:
     return pathlib.Path(file_path).suffix
 
 def get_file_data(file_path):

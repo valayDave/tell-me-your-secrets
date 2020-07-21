@@ -53,26 +53,29 @@ module_logger = create_logger(MODULE_NAME)
 
 
 class Signature(metaclass=abc.ABCMeta):
-    def __init__(self,part,name,signature):
+    def __init__(self, part: str, name: str, signature: str):
         self.part = part
         self.name = name
         self.signature = signature
     
     @abc.abstractmethod
-    def match(self, file_path,file_content) -> bool:
+    def match(self, file_path: str, file_content: str) -> bool:
         """Match Input of the With Signature of the part and Signature and Type of matching."""
         raise NotImplemented
 
+    def __str__(self):
+        return f'Type:{self.__class__} Name:{self.name} Part:{self.part}: Signature:{self.signature}'
+
 
 class RegexSignature(Signature):
-    def __init__(self, part, name,signature):
-        super().__init__(part, name,signature)
+    def __init__(self, part: str, name: str, signature: str):
+        super().__init__(part, name, signature)
         self.regex = re.compile(self.signature)
           
-    def match(self, file_path,file_content) -> bool:
+    def match(self, file_path: str, file_content: str) -> bool:
         compare_variable = None
         if self.part == 'extension':
-            compare_variable = find_extension(file_path)
+            compare_variable = find_extension(file_path)[1:]
         elif self.part == 'filename':
             compare_variable = file_path.split(os.path.sep)[-1]
         elif self.part == 'contents':
@@ -80,20 +83,17 @@ class RegexSignature(Signature):
         elif self.part == 'path':
             compare_variable = file_path
         else:
-            module_logger.warn(f'Unrecognised File Part Access {self.name}')
+            module_logger.warning(f'Unrecognised File Part Access {self.name}')
             return False
 
-        return self.regex.search(compare_variable) != None
-    
-    def __str__(self):
-        return self.name + ' : ' + self.part + ' : Regex : '+ self
+        return self.regex.search(compare_variable) is not None
 
 
 class SimpleMatch(Signature):
-    def __init__(self, part, name,signature):
-        super().__init__(part, name,signature)
+    def __init__(self, part: str, name: str, signature: str):
+        super().__init__(part, name, signature)
 
-    def match(self, file_path,file_content) -> bool:
+    def match(self, file_path: str, file_content: str) -> bool:
         compare_variable = None
         if self.part == 'extension':
             compare_variable = find_extension(file_path)
@@ -104,7 +104,7 @@ class SimpleMatch(Signature):
         elif self.part == 'path':
             compare_variable = file_path
         else:
-            module_logger.warn(f'Unrecognised File Part Access {self.name}')
+            module_logger.warning(f'Unrecognised File Part Access {self.name}')
         
         return compare_variable == self.signature
 
@@ -143,7 +143,7 @@ class SignatureRecognizer:
             elif 'regex' in signature_obj:
                 self.signatures.append(RegexSignature(signature_obj['part'],signature_obj['name'],signature_obj['regex']))
             else:
-                module_logger.warn(f'No Match Method Of Access')
+                module_logger.warning(f'No Match Method Of Access')
             chosen_configs.append(signature_obj['name']+" In File "+signature_obj['part'])
         
         if len(self.user_filters) > 0:
