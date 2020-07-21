@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from tell_me_your_secrets.__main__ import SimpleMatch, RegexSignature
+from tell_me_your_secrets.__main__ import RegexSignature, SimpleMatch
 
 
 class RegexSignatureTest(unittest.TestCase):
