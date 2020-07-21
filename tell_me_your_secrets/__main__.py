@@ -1,7 +1,10 @@
 import yaml
 import abc
+
+from gitignore_parser import parse_gitignore
+
 from .defaults import *
-from .logger import create_logger,logging
+from .logger import create_logger, logging
 from .utils import *
 import re
 from pandas import DataFrame
@@ -28,14 +31,15 @@ Examples usage :
 tell-me-your-secrets <PATH_TO_FOLDER> -f aws microsoft crypto digitalocean ssh sql google
 
 '''.format(config_names=config_names)
-arguement_parser = argparse.ArgumentParser(description=module_description)
-arguement_parser.formatter_class = argparse.RawDescriptionHelpFormatter
-arguement_parser.add_argument('search_path',help='The Root Directory From which the Search for the Key/Pem files is initiated')
-arguement_parser.add_argument('-c','--config',help='Path To Another config.yml for Extracting The Data')
-arguement_parser.add_argument('-w','--write',help='Path of the csv File to which results are written')
-arguement_parser.add_argument('-f','--filter',help='Filter the Signatures you want to apply. ',nargs='+')
-arguement_parser.add_argument('-v','--verbose',help='Enable debug level logging. ', action='store_true')
-arguement_parser.add_argument('-e','--exit',help='Exit non-zero on results found. ',action='store_true')
+argument_parser = argparse.ArgumentParser(description=module_description)
+argument_parser.formatter_class = argparse.RawDescriptionHelpFormatter
+argument_parser.add_argument('search_path', help='The Root Directory From which the Search for the Key/Pem files is initiated')
+argument_parser.add_argument('-c', '--config', help='Path To Another config.yml for Extracting The Data')
+argument_parser.add_argument('-w', '--write', help='Path of the csv File to which results are written')
+argument_parser.add_argument('-f', '--filter', help='Filter the Signatures you want to apply. ', nargs='+')
+argument_parser.add_argument('-v', '--verbose', help='Enable debug level logging. ', action='store_true')
+argument_parser.add_argument('-e', '--exit', help='Exit non-zero on results found. ', action='store_true')
+argument_parser.add_argument('-g', '--gitignore', help='Ignore .gitignore mapped objects. ', action='store_true')
 module_logger = create_logger(MODULE_NAME)
 
 # Options
@@ -110,10 +114,13 @@ class SimpleMatch(Signature):
 
 
 class SignatureRecognizer:
-    def __init__(self, config_object: dict, path, print_results=VERBOSE_OUTPUT, write_results=SAVE_ON_COMPLETE,
-                 output_path=DEFAULT_OUTPUT_PATH, user_filters=[]):
+    def __init__(self, config_object: dict, path: str, use_gitignore: bool, print_results=VERBOSE_OUTPUT,
+                 write_results=SAVE_ON_COMPLETE, output_path=DEFAULT_OUTPUT_PATH, user_filters: list = []):
         self.config = config_object  # todo: Fix this Later.
         self.path = path
+        self.use_gitignore = use_gitignore
+        if use_gitignore:
+            self.gitignore_matcher = parse_gitignore(os.path.join(path, '.gitignore'))
         self.blacklisted_extensions = config_object.get('blacklisted_extensions', [])
         self.blacklisted_paths = [path.format(sep=os.path.sep) for path in config_object['blacklisted_paths']]
         self.red_flag_extensions = config_object.get('red_flag_extensions', [])
@@ -122,7 +129,7 @@ class SignatureRecognizer:
         self.print_results = print_results
         self.signatures = []
         self.matched_signatures = []
-        self.user_filters= user_filters
+        self.user_filters = user_filters
         self.output_path = output_path
         # $ Make Configuration Objects For each of the Signatures in the Config Object.
         self.load_config()
@@ -196,10 +203,14 @@ class SignatureRecognizer:
         return (None,None)
     
     # $ Marks the files needed to be skipped for 
-    def check_skippable_file(self,file_path):
+    def check_skippable_file(self,file_path: str) -> bool:
         file_name = file_path.split(os.path.sep)[-1]
         if len([extension for extension in self.red_flag_extensions if extension in file_name]):
             return False
+
+        if self.gitignore_check(file_path):
+            return True
+
         # $ Check if if File is is in blacklisted extension
         elif len([extension for extension in self.blacklisted_extensions if extension in file_name]):
             return True
@@ -213,35 +224,43 @@ class SignatureRecognizer:
         except:
             return False
 
-    def check_accepted_path(self,dir_path):
+    def gitignore_check(self, matcher: str) -> bool:
+        return self.use_gitignore and not self.gitignore_matcher(matcher)
+
+    def check_accepted_path(self, dir_path: str) -> bool:
         if len([matched_path for matched_path in self.blacklisted_paths if matched_path in dir_path]) > 0:
             return False
+
+        if self.gitignore_check(dir_path):
+            return False
+
         return True
 
-    def get_files(self,mypath):
+    def get_files(self, path: str) -> list:
         f = []
-        for (dirpath, dirnames, filenames) in os.walk(mypath):
+        for (dir_path, dir_names, filenames) in os.walk(path):
             # Todo : Over here the Engine Will Test for the Different Types and other things. 
-            if not self.check_accepted_path(dirpath):
+            if not self.check_accepted_path(dir_path):
                 continue
-            adding_files = [os.path.abspath(os.path.join(dirpath,file)) for file in filenames if not self.check_skippable_file(os.path.abspath(os.path.join(dirpath,file)))]
+            adding_files = [os.path.abspath(os.path.join(dir_path,file)) for file in filenames if not self.check_skippable_file(os.path.abspath(os.path.join(dir_path,file)))]
             f.extend(adding_files)
         return f
 
     
-def init_signature(config: dict, path: str, write_path: str, user_filters: list):
+def init_signature(config: dict, path: str, write_path: str, user_filters: list, use_gitignore: bool):
     # $ todo : Create the signature Object with the methods that
     if write_path:
-        return SignatureRecognizer(config, path, write_results=True, output_path=write_path, user_filters=user_filters)
+        return SignatureRecognizer(config, path, use_gitignore, write_results=True, output_path=write_path,
+                                   user_filters=user_filters)
 
-    return SignatureRecognizer(config, path, user_filters=user_filters)
+    return SignatureRecognizer(config, path, use_gitignore, user_filters=user_filters)
 
 # $ Gets all subpaths for the directory. 
 
 
 def run_service() -> Tuple[bool,bool]:
     # $ todo : Import Config.yml or Use the one From defaults. 
-    parsed_arguments = arguement_parser.parse_args()
+    parsed_arguments = argument_parser.parse_args()
     if parsed_arguments.verbose:
         module_logger.setLevel(logging.DEBUG)
         module_logger.handlers[0].setLevel(logging.DEBUG)
@@ -268,8 +287,12 @@ def run_service() -> Tuple[bool,bool]:
     if parsed_arguments.filter is not None:
         user_filters = parsed_arguments.filter
 
+    use_gitignore = False
+    if parsed_arguments.gitignore:
+        use_gitignore = True
+
     # $  Extract FILTERED Files from the Path
-    sig_recognizer = init_signature(config, search_path, write_path, user_filters)
+    sig_recognizer = init_signature(config, search_path, write_path, user_filters, use_gitignore)
     sig_recognizer.find_vulnerable_files()
 
     return len(sig_recognizer.matched_signatures) > 0 , parsed_arguments.exit
