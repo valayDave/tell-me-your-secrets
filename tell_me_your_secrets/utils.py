@@ -1,5 +1,6 @@
 import math
-import pathlib # For Python 3.4.. TODO : Check for this. 
+import pathlib
+
 
 def col_print(title, array, term_width=150, pad_size=1):
     indent = " " * 4
@@ -20,9 +21,10 @@ def col_print(title, array, term_width=150, pad_size=1):
 def find_extension(file_path: str) -> str:
     return pathlib.Path(file_path).suffix
 
+
 def get_file_data(file_path):
     try:
-        f = open(file_path,encoding = "ISO-8859-1")
+        f = open(file_path, encoding="ISO-8859-1")
         data = f.read()
         f.close()
         return data
