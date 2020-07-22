@@ -1,7 +1,4 @@
 import abc
-
-from gitignore_parser import parse_gitignore
-
 import argparse
 import logging
 import os
@@ -10,6 +7,7 @@ import sys
 from typing import Tuple
 
 import yaml
+from gitignore_parser import parse_gitignore
 from pandas import DataFrame
 
 from tell_me_your_secrets.defaults import (DEFAULT_CONFIG_PATH,
