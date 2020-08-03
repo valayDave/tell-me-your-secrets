@@ -68,3 +68,7 @@ PiZodLoJ21/7Ph35BYzS43dtL7IrLAP/TarvYbeg
         signature = RegexSignature('random', 'Random', '')
         self.assertFalse(signature.match('', ''))
 
+    def test_invalid_regex(self):
+        with self.assertRaises(TypeError):
+            RegexSignature('contents', 'Facebook Secret Key',
+                           '(?i)(facebook|fb)(.{0,20})?(?-i)[''\"][0-9a-f]{32}[''\"]')

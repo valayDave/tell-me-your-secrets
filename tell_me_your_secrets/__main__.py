@@ -74,7 +74,10 @@ class Signature(metaclass=abc.ABCMeta):
 class RegexSignature(Signature):
     def __init__(self, part: str, name: str, signature: str):
         super().__init__(part, name, signature)
-        self.regex = re.compile(self.signature)
+        try:
+            self.regex = re.compile(self.signature)
+        except re.error as e:
+            raise TypeError(f'Failed to compile regex for {self.name} `{self.signature}` - {e}')
           
     def match(self, file_path: str, file_content: str) -> bool:
         compare_variable = None
