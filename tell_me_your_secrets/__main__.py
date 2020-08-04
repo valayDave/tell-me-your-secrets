@@ -36,15 +36,15 @@ Examples usage :
 tell-me-your-secrets <PATH_TO_FOLDER> -f aws microsoft crypto digitalocean ssh sql google
 
 '''
-arguement_parser = argparse.ArgumentParser(description=module_description)
-arguement_parser.formatter_class = argparse.RawDescriptionHelpFormatter
-arguement_parser.add_argument('search_path',help='The Root Directory From which the Search for the Key/Pem files is initiated')
-arguement_parser.add_argument('-c','--config',help='Path To Another config.yml for Extracting The Data')
-arguement_parser.add_argument('-w','--write',help='Path of the csv File to which results are written')
-arguement_parser.add_argument('-f','--filter',help='Filter the Signatures you want to apply. ',nargs='+')
-arguement_parser.add_argument('-v','--verbose',help='Enable debug level logging. ', action='store_true')
-arguement_parser.add_argument('-e','--exit',help='Exit non-zero on results found. ',action='store_true')
-arguement_parser.add_argument('-g', '--gitignore', help='Ignore .gitignore mapped objects. ', action='store_true')
+argument_parser = argparse.ArgumentParser(description=module_description)
+argument_parser.formatter_class = argparse.RawDescriptionHelpFormatter
+argument_parser.add_argument('search_path', help='The Root Directory From which the Search for the Key/Pem files is initiated')
+argument_parser.add_argument('-c', '--config', help='Path To Another config.yml for Extracting The Data')
+argument_parser.add_argument('-w', '--write', help='Path of the csv File to which results are written')
+argument_parser.add_argument('-f', '--filter', help='Filter the Signatures you want to apply. ', nargs='+')
+argument_parser.add_argument('-v', '--verbose', help='Enable debug level logging. ', action='store_true')
+argument_parser.add_argument('-e', '--exit', help='Exit non-zero on results found. ', action='store_true')
+argument_parser.add_argument('-g', '--gitignore', help='Ignore .gitignore mapped objects. ', action='store_true')
 module_logger = create_logger(MODULE_NAME)
 
 # Options
@@ -271,7 +271,7 @@ def init_signature(config: dict, search_path: str, write_path: str, user_filters
 
 def run_service() -> Tuple[bool,bool]:
     # $ todo : Import Config.yml or Use the one From defaults. 
-    parsed_arguments = arguement_parser.parse_args()
+    parsed_arguments = argument_parser.parse_args()
     if parsed_arguments.verbose:
         module_logger.setLevel(logging.DEBUG)
         module_logger.handlers[0].setLevel(logging.DEBUG)
