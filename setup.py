@@ -6,7 +6,7 @@ with open('Readme.md', 'r') as fh:
 setuptools.setup(
     name='tell_me_your_secrets',
     packages=setuptools.find_packages(),
-    version='1.77',
+    version='1.78',
     license='MIT',
     description='A simple module which finds files with different secrets keys present inside a directory.'
                 'Secrets derived from 120 different signatures.',
