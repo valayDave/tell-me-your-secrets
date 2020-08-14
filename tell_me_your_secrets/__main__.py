@@ -51,7 +51,7 @@ module_logger = create_logger(MODULE_NAME)
 #   - Import Config.yml or Use the one From defaults.
 #   - Import the path if provided Or use Paths from the Defaults.: These Should be according to the OS(Can be in later Versions. Currently for Ubuntu)
 #   - Initialize the Signature Object from config.yml
-#   - Path Signature
+#   - Path Signatures
 #   - Content Signatures.
 #   - Extract FILTERED Files from the Path
 #   - Run the FILTERED Files through signatures.
