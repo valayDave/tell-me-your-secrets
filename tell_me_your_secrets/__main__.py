@@ -47,6 +47,15 @@ argument_parser.add_argument('-e', '--exit', help='Exit non-zero on results foun
 argument_parser.add_argument('-g', '--gitignore', help='Ignore .gitignore mapped objects. ', action='store_true')
 module_logger = create_logger(MODULE_NAME)
 
+# Process:
+#   - Import Config.yml or Use the one From defaults.
+#   - Import the path if provided Or use Paths from the Defaults.: These Should be according to the OS(Can be in later Versions. Currently for Ubuntu)
+#   - Initialize the Signature Object from config.yml
+#   - Path Signature
+#   - Content Signatures.
+#   - Extract FILTERED Files from the Path
+#   - Run the FILTERED Files through signatures.
+
 
 class Signature(metaclass=abc.ABCMeta):
     def __init__(self, part: str, name: str, signature: str):
