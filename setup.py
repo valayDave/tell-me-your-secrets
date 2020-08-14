@@ -10,7 +10,7 @@ setuptools.setup(
     license='MIT',
     description='A simple module which finds files with different secrets keys present inside a directory.'
                 'Secrets derived from 120 different signatures.',
-    author='Valay Dave',                   
+    author='Valay Dave',
     include_package_data=True,
     author_email='valaygaurang@gmail.com',
     url='https://github.com/valayDave/tell-me-your-secrets',
