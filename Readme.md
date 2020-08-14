@@ -39,7 +39,7 @@ tell-me-your-secrets [-h] [-c CONFIG] [-w WRITE] [-f FILTER [FILTER ...]] [-v] [
 
 ## Module Configuration
 
-The `config.yml` file contains the configuration for the module. All signatures derived from the config file. 
+The `config.yml` file contains the configuration for the module. All signatures derived from the config file.
 
 ```yaml
 blacklisted_extensions: [] # list of extensions to ignore
@@ -60,7 +60,7 @@ signatures: # list of signatures to check
 
 ## Module Inspiration
 
-As a sysadmin, when machines are provisioned on the cloud to developers, some wrecklessly leave secret keys and files behind on those machines. This module helps find such leakages.
+As a sysadmin, when machines are provisioned on the cloud to developers, some recklessly leave secret keys and files behind on those machines. This module helps find such leakages.
 
 ## Module Credits 
 
