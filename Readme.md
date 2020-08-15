@@ -1,30 +1,33 @@
 # Tell Me Your Secrets
 
+![CI](https://github.com/valayDave/tell-me-your-secrets/workflows/CI/badge.svg)
+[![PyPI version](https://badge.fury.io/py/tell-me-your-secrets.svg)](https://badge.fury.io/py/tell-me-your-secrets)
+
 A simple module which finds files with different secrets keys present inside a directory. Secrets derived from 120 different signatures.
 
-## Currently Tested On  
-- Python 3.4+ 
-- Ubuntu 16.04, 18.04
+## Installation
 
+### Via Pip
 
-## Module Installation Via Pip
+```bash
+pip install tell-me-your-secrets
+```
 
-- ``pip install tell-me-your-secrets``
-- or 
-- ``pip3 install tell-me-your-secrets``
+### From Source 
 
-
-## Module Installation From Source 
-
-- ``git clone git@github.com:valayDave/tell-me-your-secrets.git``
-- ``cd tell-me-your-secrets``
-- ``python3 -m venv .env``
-- ``source .env/bin/activate``
-- ``pip install .``
+```bash
+git clone git@github.com:valayDave/tell-me-your-secrets.git``
+cd tell-me-your-secrets
+python3 -m venv .env
+source .env/bin/activate
+pip install .
+```
 
 ## Module Usage
 
-- ``tell-me-your-secrets [-h] [-c CONFIG_PATH] [-w WRITE_PATH] [-f FILTER [FILTER ...]] <SEARCH_PATH>``
+```bash
+tell-me-your-secrets [-h] [-c CONFIG] [-w WRITE] [-f FILTER [FILTER ...]] [-v] [-e] [-g] search_path
+```
 
 ![](Resources/output_example.gif)
 
@@ -36,7 +39,7 @@ A simple module which finds files with different secrets keys present inside a d
 
 ## Module Configuration
 
-- The ``config.yml`` file contains the configuration for the module. All signatures derived from the config file. 
+The `config.yml` file contains the configuration for the module. All signatures derived from the config file.
 
 ```yaml
 blacklisted_extensions: [] # list of extensions to ignore
@@ -51,12 +54,13 @@ signatures: # list of signatures to check
 
 ## Contributing
 
-- Fork and branch based PR. 
-- Open to integrate new signatures if you send a PR. 
+- Fork and branch based PR.
+- Open to integrate new signatures if you send a PR.
+- Be sure to add tests for additional functional
 
 ## Module Inspiration
 
-As a sysadmin, when machines are provisioned on the cloud to developers, some wrecklessly leave secret keys and files behind on those machines. This module helps find such leakages.
+As a sysadmin, when machines are provisioned on the cloud to developers, some recklessly leave secret keys and files behind on those machines. This module helps find such leakages.
 
 ## Module Credits 
 
@@ -76,3 +80,7 @@ Shell profile configuration file, Shell command alias configuration file, PHP co
 
 ## Author 
 - [Valay Dave](valaygaurang@gmail.com)
+
+## Licence
+
+MIT
