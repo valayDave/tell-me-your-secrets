@@ -57,7 +57,7 @@ signatures: # list of signatures to check
 - Fork this repo
 - Create pull requests against the master branch
 - Be sure to add tests for changes or additional functionality
-- Ensure that the PR description clearly describes the behaviour
+- Ensure that the PR description clearly describes the behaviour of the change
 - Ensure that CI tests pass
 
 ## Module Inspiration
