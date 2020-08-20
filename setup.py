@@ -1,7 +1,10 @@
 import setuptools
 
-with open('Readme.md', 'r') as fh:
+with open('Readme.md') as fh:
     long_description = fh.read()
+
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
 
 setuptools.setup(
     name='tell_me_your_secrets',
@@ -17,11 +20,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     keywords=['Security', 'SSH', 'Secret Keys', 'SysAdmin'],
-    install_requires=[
-        'pyyaml',
-        'pandas',
-        'gitignore-parser',
-    ],
+    install_requires=required,
     python_requires='>=3.4',
     entry_points={
         'console_scripts': ['tell-me-your-secrets=tell_me_your_secrets.__main__:run_service'],
