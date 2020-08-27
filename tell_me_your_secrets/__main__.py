@@ -136,7 +136,7 @@ class SignatureRecognizer:
         self.signatures = self.load_signatures(config_object.get('signatures', {}), user_filters)
         module_logger.info(f'Secret Sniffer Initialised For Path: {search_path}')
 
-    # $ Create the signature objects over here. 
+    # $ Create the signature objects over here.
     @staticmethod
     def load_signatures(raw_signatures: dict, user_filters: list) -> list:
         chosen_configs = []
@@ -149,20 +149,20 @@ class SignatureRecognizer:
                 if len([filtered_val for filtered_val in user_filters if str(filtered_val).lower() in str(signature_obj['name']).lower()]) == 0:
                     continue
             if 'match' in signature_obj:
-                parsed_signatures.append(SimpleMatch(signature_obj['part'],signature_obj['name'],signature_obj['match']))
+                parsed_signatures.append(SimpleMatch(signature_obj['part'], signature_obj['name'], signature_obj['match']))
             elif 'regex' in signature_obj:
-                parsed_signatures.append(RegexSignature(signature_obj['part'],signature_obj['name'],signature_obj['regex']))
+                parsed_signatures.append(RegexSignature(signature_obj['part'], signature_obj['name'], signature_obj['regex']))
             else:
-                module_logger.warning(f'No Match Method Of Access')
-            chosen_configs.append(signature_obj['name']+" In File "+signature_obj['part'])
-        
+                module_logger.warning('No Match Method Of Access')
+            chosen_configs.append(signature_obj['name'] + " In File " + signature_obj['part'])
+
         if len(user_filters) > 0:
-            module_logger.info('Applying Filtered Signatures : \n\n\t%s\n','\n\t'.join(chosen_configs))
+            module_logger.info('Applying Filtered Signatures : \n\n\t%s\n', '\n\t'.join(chosen_configs))
 
         return parsed_signatures
 
     @staticmethod
-    def create_matched_signature_object(name,part,file_path):
+    def create_matched_signature_object(name, part, file_path):
         return {
             'name': name,
             'part': part,

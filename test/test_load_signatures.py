@@ -2,7 +2,8 @@ import unittest
 
 import yaml
 
-from tell_me_your_secrets.__main__ import SignatureRecognizer, DEFAULT_CONFIG_PATH
+from tell_me_your_secrets.__main__ import SignatureRecognizer
+from tell_me_your_secrets.defaults import DEFAULT_CONFIG_PATH
 
 
 class SignatureLoadTest(unittest.TestCase):
