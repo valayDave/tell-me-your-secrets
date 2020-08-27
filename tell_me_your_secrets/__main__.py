@@ -117,7 +117,6 @@ class SimpleMatch(Signature):
 class SignatureRecognizer:
     def __init__(self, config_object: dict, search_path: str, use_gitignore: bool, print_results=VERBOSE_OUTPUT,
                  write_results=SAVE_ON_COMPLETE, output_path=DEFAULT_OUTPUT_PATH, user_filters: list = []):
-        self.config = config_object  # todo: Fix this Later.
         self.search_path = search_path
         self.use_gitignore = use_gitignore
         if use_gitignore:
@@ -131,37 +130,39 @@ class SignatureRecognizer:
         self.max_file_size = config_object.get('max_file_size', MAX_FILE_SIZE)
         self.write_results = write_results
         self.print_results = print_results
-        self.signatures = []
         self.matched_signatures = []
-        self.user_filters = user_filters
         self.output_path = output_path
         # $ Make Configuration Objects For each of the Signatures in the Config Object.
-        self.load_config()
+        self.signatures = self.load_signatures(config_object.get('signatures', {}), user_filters)
         module_logger.info(f'Secret Sniffer Initialised For Path: {search_path}')
 
-    # $ Create the signature objects over here.
-    def load_config(self):
+    # $ Create the signature objects over here. 
+    @staticmethod
+    def load_signatures(raw_signatures: dict, user_filters: list) -> list:
         chosen_configs = []
-        for signature_obj in self.config['signatures']:
+        parsed_signatures = []
+        for signature_obj in raw_signatures:
             # $ Ignore Object if no Name/Part.
             if 'name' not in signature_obj or 'part' not in signature_obj:
                 continue
-            if len(self.user_filters) > 0:
-                if len([filtered_val for filtered_val in self.user_filters if str(filtered_val).lower() in str(signature_obj['name']).lower()]) == 0:
+            if len(user_filters) > 0:
+                if len([filtered_val for filtered_val in user_filters if str(filtered_val).lower() in str(signature_obj['name']).lower()]) == 0:
                     continue
             if 'match' in signature_obj:
-                self.signatures.append(SimpleMatch(signature_obj['part'], signature_obj['name'], signature_obj['match']))
+                parsed_signatures.append(SimpleMatch(signature_obj['part'],signature_obj['name'],signature_obj['match']))
             elif 'regex' in signature_obj:
-                self.signatures.append(RegexSignature(signature_obj['part'], signature_obj['name'], signature_obj['regex']))
+                parsed_signatures.append(RegexSignature(signature_obj['part'],signature_obj['name'],signature_obj['regex']))
             else:
-                module_logger.warning('No Match Method Of Access')
-            chosen_configs.append(f"{signature_obj['name']} In File {signature_obj['part']}")
+                module_logger.warning(f'No Match Method Of Access')
+            chosen_configs.append(signature_obj['name']+" In File "+signature_obj['part'])
+        
+        if len(user_filters) > 0:
+            module_logger.info('Applying Filtered Signatures : \n\n\t%s\n','\n\t'.join(chosen_configs))
 
-        if len(self.user_filters) > 0:
-            module_logger.info('Applying Filtered Signatures : \n\n\t%s\n', '\n\t'.join(chosen_configs))
+        return parsed_signatures
 
     @staticmethod
-    def create_matched_signature_object(name, part, file_path):
+    def create_matched_signature_object(name,part,file_path):
         return {
             'name': name,
             'part': part,
