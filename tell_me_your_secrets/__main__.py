@@ -144,9 +144,12 @@ class SignatureRecognizer:
         for signature_obj in raw_signatures:
             # $ Ignore Object if no Name/Part.
             if 'name' not in signature_obj or 'part' not in signature_obj:
+                module_logger.warn('Signature definition missing either name or part')
                 continue
             if len(user_filters) > 0:
                 if len([filtered_val for filtered_val in user_filters if str(filtered_val).lower() in str(signature_obj['name']).lower()]) == 0:
+                    module_logger.warning(f'Duplicate named used defined filter matching skipping '
+                                          f'adding {signature_obj["name"]} from config')
                     continue
             if 'match' in signature_obj:
                 parsed_signatures.append(SimpleMatch(signature_obj['part'], signature_obj['name'], signature_obj['match']))
