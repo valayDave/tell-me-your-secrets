@@ -1,7 +1,6 @@
 import unittest
-from unittest.mock import patch
 
-from tell_me_your_secrets.__main__ import SimpleMatch, RegexSignature
+from tell_me_your_secrets.__main__ import RegexSignature
 
 
 class RegexSignatureTest(unittest.TestCase):
@@ -19,12 +18,12 @@ class RegexSignatureTest(unittest.TestCase):
         self.assertFalse(signature.match('/path/to/.file', ''))
 
     def test_filename_match(self):
-        signature = RegexSignature('filename', 'git-credential-store helper credentials file', '^\.?git-credentials$')
+        signature = RegexSignature('filename', 'git-credential-store helper credentials file', r'^\.?git-credentials$')
         self.assertTrue(signature.match('/path/to/.git-credentials', ''))
         self.assertTrue(signature.match('/path/to/git-credentials', ''))
 
     def test_filename_no_match(self):
-        signature = RegexSignature('filename', 'git-credential-store helper credentials file', '^\.?git-credentials$')
+        signature = RegexSignature('filename', 'git-credential-store helper credentials file', r'^\.?git-credentials$')
         self.assertFalse(signature.match('/path/to/git-credentials-1', ''))
         self.assertFalse(signature.match('/path/to/.git', ''))
 
