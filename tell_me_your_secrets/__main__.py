@@ -1,6 +1,8 @@
 import abc
 import argparse
+import collections
 import logging
+import math
 import os
 import re
 import sys
@@ -9,6 +11,7 @@ from typing import Tuple
 import yaml
 from gitignore_parser import parse_gitignore
 from pandas import DataFrame
+from testfixtures.compat import xrange
 
 from tell_me_your_secrets.defaults import (AVAILABLE_NAMES, COL_PRINT_WIDTH,
                                            DEFAULT_CONFIG_PATH,
@@ -45,6 +48,9 @@ argument_parser.add_argument('-f', '--filter', help='Filter the Signatures you w
 argument_parser.add_argument('-v', '--verbose', help='Enable debug level logging. ', action='store_true')
 argument_parser.add_argument('-e', '--exit', help='Exit non-zero on results found. ', action='store_true')
 argument_parser.add_argument('-g', '--gitignore', help='Ignore .gitignore mapped objects. ', action='store_true')
+argument_parser.add_argument('-en', '--entropy', help='Enable entropy checking', action='store_true')
+argument_parser.add_argument('-ev', '--entropy-value', help='Entropy check value', type=int, choices=xrange(1, 10),
+                             default=5)
 module_logger = create_logger(MODULE_NAME)
 
 # Process:
@@ -172,7 +178,7 @@ class SignatureRecognizer:
             'path': file_path
         }
 
-    def find_vulnerable_files(self):
+    def find_vulnerable_files(self, use_entropy_check: bool, entropy_check_value: int):
         filtered_files = self.get_files(self.search_path)
         for possible_compromised_path in filtered_files:
             # $ todo : Create more modular processing of files.
@@ -182,6 +188,13 @@ class SignatureRecognizer:
             if file_content is None:
                 continue
             # $ Run the Signature Checking Engine over here For different Pattern Signatures.
+
+            if use_entropy_check:
+                for line in file_content.splitlines():
+                    entropy = self.get_entropy(line)
+                    if entropy > entropy_check_value:
+                        module_logger.info(f'Entropy value {entropy} found in `{line}` in {possible_compromised_path}')
+
             signature_name, signature_part = self.run_signatures(possible_compromised_path, file_content)
             if signature_name is not None:
                 self.matched_signatures.append(self.create_matched_signature_object(signature_name, signature_part,
@@ -202,6 +215,25 @@ class SignatureRecognizer:
             file_name = self.output_path
             write_df.to_csv(file_name)
             module_logger.info(f'Completed Writing Results to File : {self.output_path}')
+
+    @staticmethod
+    def get_entropy(data: str,) -> float:
+        if len(data) <= 1:
+            return 0
+
+        counts = collections.Counter()
+
+        for d in data:
+            counts[d] += 1
+
+        ent = 0
+
+        probs = [float(c) / len(data) for c in counts.values()]
+        for p in probs:
+            if p > 0.:
+                ent -= p * math.log(p, 2.)
+
+        return ent
 
     def run_signatures(self, file_path, content):
         for signature in self.signatures:
@@ -305,9 +337,15 @@ def run_service() -> Tuple[bool, bool]:
     if parsed_arguments.gitignore:
         use_gitignore = True
 
+    use_entropy_check = False
+    if parsed_arguments.entropy:
+        use_entropy_check = True
+
+    entropy_check_value = parsed_arguments.entropy_value
+
     # $  Extract FILTERED Files from the Path
     sig_recognizer = init_signature(config, search_path, write_path, user_filters, use_gitignore)
-    sig_recognizer.find_vulnerable_files()
+    sig_recognizer.find_vulnerable_files(use_entropy_check, entropy_check_value)
 
     return len(sig_recognizer.matched_signatures) > 0, parsed_arguments.exit
 
