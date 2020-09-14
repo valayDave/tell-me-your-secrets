@@ -1,6 +1,8 @@
 import math
 import pathlib
 
+import pathlib
+
 import yaml
 
 from tell_me_your_secrets.defaults import COL_PRINT_WIDTH, DEFAULT_CONFIG_PATH
@@ -43,9 +45,10 @@ def col_print(title: str, array: list, term_width: int = COL_PRINT_WIDTH, pad_si
 def find_extension(file_path: str) -> str:
     return pathlib.Path(file_path).suffix
 
+
 def get_file_data(file_path):
     try:
-        f = open(file_path,encoding = "ISO-8859-1")
+        f = open(file_path, encoding="ISO-8859-1")
         data = f.read()
         f.close()
         return data

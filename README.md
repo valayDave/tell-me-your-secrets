@@ -1,42 +1,45 @@
 # Tell Me Your Secrets
 
+![CI](https://github.com/valayDave/tell-me-your-secrets/workflows/CI/badge.svg)
+[![PyPI version](https://badge.fury.io/py/tell-me-your-secrets.svg)](https://badge.fury.io/py/tell-me-your-secrets)
+
 A simple module which finds files with different secrets keys present inside a directory. Secrets derived from 120 different signatures.
 
-## Currently Tested On  
-- Python 3.4+ 
-- Ubuntu 16.04, 18.04
+## Installation
 
+### Via Pip
 
-## Module Installation Via Pip
+```bash
+pip install tell-me-your-secrets
+```
 
-- ``pip install tell-me-your-secrets``
-- or 
-- ``pip3 install tell-me-your-secrets``
+### From Source
 
-
-## Module Installation From Source 
-
-- ``git clone git@github.com:valayDave/tell-me-your-secrets.git``
-- ``cd tell-me-your-secrets``
-- ``python3 -m venv .env``
-- ``source .env/bin/activate``
-- ``pip install .``
+```bash
+git clone git@github.com:valayDave/tell-me-your-secrets.git``
+cd tell-me-your-secrets
+python3 -m venv .env
+source .env/bin/activate
+pip install .
+```
 
 ## Module Usage
 
-- ``tell-me-your-secrets [-h] [-c CONFIG_PATH] [-w WRITE_PATH] [-f FILTER [FILTER ...]] <SEARCH_PATH>``
+```bash
+tell-me-your-secrets [-h] [-c CONFIG] [-w WRITE] [-f FILTER [FILTER ...]] [-v] [-e] [-g] search_path
+```
 
 ![](Resources/output_example.gif)
 
-## Usage Examples 
+## Usage Examples
 
-- ``tell-me-your-secrets -c new_config.yml /home`` : Find secrets in the home directory according to the provided config file. ``config.yml`` structure provided in the next section. 
+- ``tell-me-your-secrets -c new_config.yml /home`` : Find secrets in the home directory according to the provided config file. ``config.yml`` structure provided in the next section.
 
-- ``tell-me-your-secrets /home -f aws microsoft crypto digitalocean ssh sql google`` : Will use the [default config](https://github.com/valayDave/tell-me-your-secrets/blob/master/tell_me_your_secrets/config.yml) and filter signatures according to those keywords.  
+- ``tell-me-your-secrets /home -f aws microsoft crypto digitalocean ssh sql google`` : Will use the [default config](https://github.com/valayDave/tell-me-your-secrets/blob/master/tell_me_your_secrets/config.yml) and filter signatures according to those keywords.
 
 ## Module Configuration
 
-- The ``config.yml`` file contains the configuration for the module. All signatures derived from the config file. 
+The `config.yml` file contains the configuration for the module. All signatures derived from the config file.
 
 ```yaml
 blacklisted_extensions: [] # list of extensions to ignore
@@ -51,18 +54,21 @@ signatures: # list of signatures to check
 
 ## Contributing
 
-- Fork and branch based PR. 
-- Open to integrate new signatures if you send a PR. 
+- Fork this repo
+- Create pull requests against the master branch
+- Be sure to add tests for changes or additional functionality
+- Ensure that the PR description clearly describes the behaviour of the change
+- Ensure that CI tests pass
 
 ## Module Inspiration
 
-As a sysadmin, when machines are provisioned on the cloud to developers, some wrecklessly leave secret keys and files behind on those machines. This module helps find such leakages.
+As a sysadmin, when machines are provisioned on the cloud to developers, some recklessly leave secret keys and files behind on those machines. This module helps find such leakages.
 
-## Module Credits 
+## Module Credits
 
 - Signatures Derived from [shhgit](https://github.com/eth0izzle/shhgit)
 
-- Available Signatures : 
+- Available Signatures :
 ```
 Chef private key, Potential Linux shadow file, Potential Linux passwd file, Docker configuration file, NPM configuration file, Environment configuration file, Contains a private key, AWS Access Key ID Value, AWS Access Key ID, AWS Account ID, AWS Secret Access Key, AWS Session Token, Artifactory, CodeClimate, Facebook access token, Google (GCM) Service account, Stripe API key, Google OAuth Key, Google Cloud API Key
 Google OAuth Access Token, Picatic API key, Square Access Token, Square OAuth Secret, PayPal/Braintree Access Token, Amazon MWS Auth Token, Twilo API Key, MailGun API Key, MailChimp API Key, SSH Password, Outlook team, Sauce Token, Slack Token, Slack Webhook, SonarQube Docs API Key, HockeyApp, Username and password in URI, NuGet API Key, Potential cryptographic private key, Log file, Potential cryptographic key bundle, Potential cryptographic key bundle
@@ -74,5 +80,10 @@ MySQL client command history file, PostgreSQL client command history file, Postg
 Shell profile configuration file, Shell command alias configuration file, PHP configuration file, GNOME Keyring database file, KeePass password manager database file, SQL dump file, Apache htpasswd file, Configuration file for auto-login process, Rubygems credentials file, Tugboat DigitalOcean management tool configuration, DigitalOcean doctl command-line client configuration file, git-credential-store helper credentials file, GitHub Hub command-line client configuration file, Git configuration file
 ```
 
-## Author 
+## Author
+
 - [Valay Dave](valaygaurang@gmail.com)
+
+## Licence
+
+MIT

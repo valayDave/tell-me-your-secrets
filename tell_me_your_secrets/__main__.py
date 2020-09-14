@@ -47,18 +47,14 @@ argument_parser.add_argument('-e', '--exit', help='Exit non-zero on results foun
 argument_parser.add_argument('-g', '--gitignore', help='Ignore .gitignore mapped objects. ', action='store_true')
 module_logger = create_logger(MODULE_NAME)
 
-# Options
-    # --path <PATH>: Checks Signatures in the Path.
-    # --config <CONFIG_PATH>: path to config or default config.yml is used. 
-    # --filter <filter1> <filter2> ... : For filtering only certian signatures for application. 
 # Process:
-#   - Import Config.yml or Use the one From defaults. 
-#   - Import the path if provided Or use Paths from the Defaults.: These Should be according to the OS(Can be in later Versions. Currently for Ubuntu)     
+#   - Import Config.yml or Use the one From defaults.
+#   - Import the path if provided Or use Paths from the Defaults.: These Should be according to the OS(Can be in later Versions. Currently for Ubuntu)
 #   - Initialize the Signature Object from config.yml
-    # - Path Signatures
-    # - Content Signatures. 
-#   - Extract FILTERED Files from the Path 
-#   - Run the FILTERED Files through signatures. 
+#   - Path Signatures
+#   - Content Signatures.
+#   - Extract FILTERED Files from the Path
+#   - Run the FILTERED Files through signatures.
 
 
 class Signature(metaclass=abc.ABCMeta):
@@ -66,11 +62,11 @@ class Signature(metaclass=abc.ABCMeta):
         self.part = part
         self.name = name
         self.signature = signature
-    
+
     @abc.abstractmethod
     def match(self, file_path: str, file_content: str) -> bool:
         """Match Input of the With Signature of the part and Signature and Type of matching."""
-        raise NotImplemented
+        raise NotImplementedError
 
     def __str__(self):
         return f'Type:{self.__class__} Name:{self.name} Part:{self.part}: Signature:{self.signature}'
@@ -80,7 +76,7 @@ class RegexSignature(Signature):
     def __init__(self, part: str, name: str, signature: str):
         super().__init__(part, name, signature)
         self.regex = re.compile(self.signature)
-          
+
     def match(self, file_path: str, file_content: str) -> bool:
         compare_variable = None
         if self.part == 'extension':
@@ -114,14 +110,13 @@ class SimpleMatch(Signature):
             compare_variable = file_path
         else:
             module_logger.warning(f'Unrecognised File Part Access {self.name}')
-        
+
         return compare_variable == self.signature
 
 
 class SignatureRecognizer:
     def __init__(self, config_object: dict, search_path: str, use_gitignore: bool, print_results=VERBOSE_OUTPUT,
                  write_results=SAVE_ON_COMPLETE, output_path=DEFAULT_OUTPUT_PATH, user_filters: list = []):
-        self.config = config_object  # todo: Fix this Later.
         self.search_path = search_path
         self.use_gitignore = use_gitignore
         if use_gitignore:
@@ -135,53 +130,59 @@ class SignatureRecognizer:
         self.max_file_size = config_object.get('max_file_size', MAX_FILE_SIZE)
         self.write_results = write_results
         self.print_results = print_results
-        self.signatures = []
         self.matched_signatures = []
-        self.user_filters = user_filters
         self.output_path = output_path
         # $ Make Configuration Objects For each of the Signatures in the Config Object.
-        self.load_config()
+        self.signatures = self.load_signatures(config_object.get('signatures', {}), user_filters)
         module_logger.info(f'Secret Sniffer Initialised For Path: {search_path}')
 
-    # $ Create the signature objects over here. 
-    def load_config(self):
+    # $ Create the signature objects over here.
+    @staticmethod
+    def load_signatures(raw_signatures: dict, user_filters: list) -> list:
         chosen_configs = []
-        for signature_obj in self.config['signatures']:
+        parsed_signatures = []
+        for signature_obj in raw_signatures:
             # $ Ignore Object if no Name/Part.
             if 'name' not in signature_obj or 'part' not in signature_obj:
+                module_logger.warn('Signature definition missing either name or part')
                 continue
-            if len(self.user_filters) > 0:
-                if len([filtered_val for filtered_val in self.user_filters if str(filtered_val).lower() in str(signature_obj['name']).lower()]) == 0:
+            if len(user_filters) > 0:
+                if len([filtered_val for filtered_val in user_filters if str(filtered_val).lower() in str(signature_obj['name']).lower()]) == 0:
+                    module_logger.warning(f'Duplicate named used defined filter matching skipping '
+                                          f'adding {signature_obj["name"]} from config')
                     continue
             if 'match' in signature_obj:
-                self.signatures.append(SimpleMatch(signature_obj['part'],signature_obj['name'],signature_obj['match']))
+                parsed_signatures.append(SimpleMatch(signature_obj['part'], signature_obj['name'], signature_obj['match']))
             elif 'regex' in signature_obj:
-                self.signatures.append(RegexSignature(signature_obj['part'],signature_obj['name'],signature_obj['regex']))
+                parsed_signatures.append(RegexSignature(signature_obj['part'], signature_obj['name'], signature_obj['regex']))
             else:
-                module_logger.warning(f'No Match Method Of Access')
-            chosen_configs.append(signature_obj['name']+" In File "+signature_obj['part'])
-        
-        if len(self.user_filters) > 0:
-            module_logger.info('Applying Filtered Signatures : \n\n\t%s\n','\n\t'.join(chosen_configs))
+                module_logger.warning('No Match Method Of Access')
+            chosen_configs.append(signature_obj['name'] + " In File " + signature_obj['part'])
 
-    def create_matched_signature_object(self,name,part,file_path):
+        if len(user_filters) > 0:
+            module_logger.info('Applying Filtered Signatures : \n\n\t%s\n', '\n\t'.join(chosen_configs))
+
+        return parsed_signatures
+
+    @staticmethod
+    def create_matched_signature_object(name, part, file_path):
         return {
             'name': name,
-            'part':part,
-            'path':file_path
+            'part': part,
+            'path': file_path
         }
-    
+
     def find_vulnerable_files(self):
         filtered_files = self.get_files(self.search_path)
         for possible_compromised_path in filtered_files:
-            # $ todo : Create more modular processing of files. 
+            # $ todo : Create more modular processing of files.
             # $ todo : Create a threaded version of the processing of files
             module_logger.debug(f'Opening File : {possible_compromised_path}')
             file_content = get_file_data(possible_compromised_path)
             if file_content is None:
                 continue
-            # $ Run the Signature Checking Engine over here For different Pattern Signatures. 
-            signature_name,signature_part = self.run_signatures(possible_compromised_path,file_content)
+            # $ Run the Signature Checking Engine over here For different Pattern Signatures.
+            signature_name, signature_part = self.run_signatures(possible_compromised_path, file_content)
             if signature_name is not None:
                 self.matched_signatures.append(self.create_matched_signature_object(signature_name, signature_part,
                                                                                     possible_compromised_path))
@@ -192,26 +193,26 @@ class SignatureRecognizer:
         module_logger.info(f'Found {len(self.matched_signatures)} matches from the search_path {self.search_path}')
         if self.write_results:
             self.write_results_to_file()
-    
+
     def write_results_to_file(self):
         if len(self.matched_signatures) > 0:
             write_df = DataFrame(self.matched_signatures)
             if '.csv' not in self.output_path:
-                self.output_path+='.csv'
+                self.output_path += '.csv'
             file_name = self.output_path
             write_df.to_csv(file_name)
             module_logger.info(f'Completed Writing Results to File : {self.output_path}')
 
-    def run_signatures(self,file_path,content):
+    def run_signatures(self, file_path, content):
         for signature in self.signatures:
-            match_result = signature.match(file_path,content)
+            match_result = signature.match(file_path, content)
             if match_result:
                 # $ Return the first signature Match.
-                return (signature.name,signature.part)
-        return (None,None)
-    
-    # $ Marks the files needed to be skipped for 
-    def check_skippable_file(self,file_path: str) -> bool:
+                return signature.name, signature.part
+        return None, None
+
+    # $ Marks the files needed to be skipped for
+    def check_skippable_file(self, file_path: str) -> bool:
         file_name = file_path.split(os.path.sep)[-1]
         if len([extension for extension in self.red_flag_extensions if extension in file_name]):
             return False
@@ -223,7 +224,7 @@ class SignatureRecognizer:
         # $ Check if if File is is in blacklisted extension
         elif len([extension for extension in self.blacklisted_extensions if extension in file_name]):
             return True
-        
+
         # $ Check if if File is larger than max size
         try:
             file_size = os.path.getsize(file_path)
@@ -249,11 +250,11 @@ class SignatureRecognizer:
     def get_files(self, search_path: str) -> list:
         files = []
         for (dir_path, dir_names, filenames) in os.walk(search_path):
-            # Todo : Over here the Engine Will Test for the Different Types and other things. 
+            # Todo : Over here the Engine Will Test for the Different Types and other things.
             if self.is_ignored_path(dir_path):
                 continue
 
-            adding_files = [os.path.abspath(os.path.join(dir_path,file)) for file in filenames if not self.check_skippable_file(os.path.abspath(os.path.join(dir_path,file)))]
+            adding_files = [os.path.abspath(os.path.join(dir_path, file)) for file in filenames if not self.check_skippable_file(os.path.abspath(os.path.join(dir_path, file)))]
             files.extend(adding_files)
         return files
 
@@ -266,11 +267,11 @@ def init_signature(config: dict, search_path: str, write_path: str, user_filters
 
     return SignatureRecognizer(config, search_path, use_gitignore, user_filters=user_filters)
 
-# $ Gets all subpaths for the directory. 
+# $ Gets all subpaths for the directory.
 
 
-def run_service() -> Tuple[bool,bool]:
-    # $ todo : Import Config.yml or Use the one From defaults. 
+def run_service() -> Tuple[bool, bool]:
+    # $ todo : Import Config.yml or Use the one From defaults.
     parsed_arguments = argument_parser.parse_args()
     if parsed_arguments.verbose:
         module_logger.setLevel(logging.DEBUG)
@@ -280,9 +281,11 @@ def run_service() -> Tuple[bool,bool]:
 
     config_path = DEFAULT_CONFIG_PATH
     if parsed_arguments.config is not None:
-        config_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguments.config)))
+        config_path = os.path.abspath(
+            os.path.join(os.path.abspath(sys.path[0]), os.path.abspath(parsed_arguments.config)))
 
-    search_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]),os.path.abspath(parsed_arguments.search_path)))
+    search_path = os.path.abspath(
+        os.path.join(os.path.abspath(sys.path[0]), os.path.abspath(parsed_arguments.search_path)))
     module_logger.debug(f'Running config from path: {config_path}')
 
     with open(config_path) as f:
@@ -292,7 +295,7 @@ def run_service() -> Tuple[bool,bool]:
     write_path = None
     if parsed_arguments.write is not None:
         write_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]), os.path.abspath(parsed_arguments.write)))
-    
+
     user_filters = []
     if parsed_arguments.filter is not None:
         user_filters = parsed_arguments.filter
@@ -305,13 +308,13 @@ def run_service() -> Tuple[bool,bool]:
     sig_recognizer = init_signature(config, search_path, write_path, user_filters, use_gitignore)
     sig_recognizer.find_vulnerable_files()
 
-    return len(sig_recognizer.matched_signatures) > 0 , parsed_arguments.exit
-    
+    return len(sig_recognizer.matched_signatures) > 0, parsed_arguments.exit
+
 
 if __name__ == '__main__':
-    has_matches,exit_val = run_service()
+    has_matches, exit_val = run_service()
     if has_matches and exit_val:
         exit(1)
 
     exit(0)
-# $ Move Signature.go and Match.go into this to make this work. 
+# $ Move Signature.go and Match.go into this to make this work.

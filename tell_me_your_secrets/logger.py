@@ -9,5 +9,5 @@ def create_logger(logger_name: str, level: int = logging.INFO):
     ch.setFormatter(formatter)
     custom_logger.addHandler(ch)
     custom_logger.setLevel(level)
-        
+
     return custom_logger
