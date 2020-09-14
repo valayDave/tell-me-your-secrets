@@ -1,8 +1,6 @@
 import math
 import pathlib
 
-import pathlib
-
 import yaml
 
 from tell_me_your_secrets.defaults import COL_PRINT_WIDTH, DEFAULT_CONFIG_PATH

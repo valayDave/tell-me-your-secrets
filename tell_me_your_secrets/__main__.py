@@ -23,15 +23,15 @@ config_names = col_print('Available Signatures : \n', get_available_names())
 module_description = f'''
 Tell Me Your Secrets
 
-Finds presence of secret files from lots of know signatures for a given folder path. 
+Finds presence of secret files from lots of know signatures for a given folder path.
 
 This module can be potentially be used to find secrets across the Linux systems
 
 {config_names}
 
-To use only some of the available signatures use the -f option. 
+To use only some of the available signatures use the -f option.
 
-Examples usage : 
+Examples usage :
 
 tell-me-your-secrets <PATH_TO_FOLDER> -f aws microsoft crypto digitalocean ssh sql google
 
