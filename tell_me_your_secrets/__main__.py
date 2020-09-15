@@ -171,7 +171,7 @@ class SignatureRecognizer:
         return parsed_signatures
 
     @staticmethod
-    def create_matched_signature_object(name, part, file_path):
+    def create_matched_signature_object(name: str, part: str, file_path: str):
         return {
             'name': name,
             'part': part,
@@ -192,8 +192,11 @@ class SignatureRecognizer:
             if use_entropy_check:
                 for line in file_content.splitlines():
                     entropy = self.get_entropy(line)
-                    if entropy > entropy_check_value:
+                    if entropy >= entropy_check_value:
                         module_logger.info(f'Entropy value {entropy} found in `{line}` in {possible_compromised_path}')
+                        self.matched_signatures.append(
+                            self.create_matched_signature_object('Entropy', 'contents', possible_compromised_path)
+                        )
 
             signature_name, signature_part = self.run_signatures(possible_compromised_path, file_content)
             if signature_name is not None:
@@ -208,16 +211,19 @@ class SignatureRecognizer:
             self.write_results_to_file()
 
     def write_results_to_file(self):
-        if len(self.matched_signatures) > 0:
-            write_df = DataFrame(self.matched_signatures)
-            if '.csv' not in self.output_path:
-                self.output_path += '.csv'
-            file_name = self.output_path
-            write_df.to_csv(file_name)
-            module_logger.info(f'Completed Writing Results to File : {self.output_path}')
+        if len(self.matched_signatures) == 0:
+            module_logger.info('No matches found, nothing to write')
+            return
+
+        write_df = DataFrame(self.matched_signatures)
+        if '.csv' not in self.output_path:
+            self.output_path += '.csv'
+        file_name = self.output_path
+        write_df.to_csv(file_name)
+        module_logger.info(f'Completed Writing Results to File : {self.output_path}')
 
     @staticmethod
-    def get_entropy(data: str,) -> float:
+    def get_entropy(data: str) -> float:
         if len(data) <= 1:
             return 0
 
@@ -226,14 +232,14 @@ class SignatureRecognizer:
         for d in data:
             counts[d] += 1
 
-        ent = 0
+        entropy = 0
 
-        probs = [float(c) / len(data) for c in counts.values()]
-        for p in probs:
-            if p > 0.:
-                ent -= p * math.log(p, 2.)
+        probabilities = [float(c) / len(data) for c in counts.values()]
+        for probability in probabilities:
+            if probability > 0.:
+                entropy -= probability * math.log(probability, 2.)
 
-        return ent
+        return entropy
 
     def run_signatures(self, file_path, content):
         for signature in self.signatures:
