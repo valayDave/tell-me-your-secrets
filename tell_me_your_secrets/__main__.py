@@ -120,6 +120,31 @@ class SimpleMatch(Signature):
         return compare_variable == self.signature
 
 
+def get_entropy(data: str) -> float:
+    """
+    Get shannon entropy value from string.
+
+    :param data: String data to check
+    :return: Float value of entropy.
+    """
+    if len(data) <= 1:
+        return 0
+
+    counts = collections.Counter()
+
+    for d in data:
+        counts[d] += 1
+
+    entropy = 0
+
+    probabilities = [float(c) / len(data) for c in counts.values()]
+    for probability in probabilities:
+        if probability > 0.:
+            entropy -= probability * math.log(probability, 2.)
+
+    return entropy
+
+
 class SignatureRecognizer:
     def __init__(self, config_object: dict, search_path: str, use_gitignore: bool, print_results=VERBOSE_OUTPUT,
                  write_results=SAVE_ON_COMPLETE, output_path=DEFAULT_OUTPUT_PATH, user_filters: list = []):
@@ -191,9 +216,9 @@ class SignatureRecognizer:
 
             if use_entropy_check:
                 for line in file_content.splitlines():
-                    entropy = self.get_entropy(line)
+                    entropy = get_entropy(line)
                     if entropy >= entropy_check_value:
-                        module_logger.info(f'Entropy value {entropy} found in `{line}` in {possible_compromised_path}')
+                        module_logger.info(f'Entropy string of {entropy} found on `{line}` within {possible_compromised_path}')
                         self.matched_signatures.append(
                             self.create_matched_signature_object('Entropy', 'contents', possible_compromised_path)
                         )
@@ -221,25 +246,6 @@ class SignatureRecognizer:
         file_name = self.output_path
         write_df.to_csv(file_name)
         module_logger.info(f'Completed Writing Results to File : {self.output_path}')
-
-    @staticmethod
-    def get_entropy(data: str) -> float:
-        if len(data) <= 1:
-            return 0
-
-        counts = collections.Counter()
-
-        for d in data:
-            counts[d] += 1
-
-        entropy = 0
-
-        probabilities = [float(c) / len(data) for c in counts.values()]
-        for probability in probabilities:
-            if probability > 0.:
-                entropy -= probability * math.log(probability, 2.)
-
-        return entropy
 
     def run_signatures(self, file_path, content):
         for signature in self.signatures:
