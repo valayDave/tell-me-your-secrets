@@ -10,17 +10,17 @@ import yaml
 from gitignore_parser import parse_gitignore
 from pandas import DataFrame
 
-from tell_me_your_secrets.defaults import (AVAILABLE_NAMES, COL_PRINT_WIDTH,
-                                           DEFAULT_CONFIG_PATH,
+from tell_me_your_secrets.defaults import (DEFAULT_CONFIG_PATH,
                                            DEFAULT_OUTPUT_PATH, MAX_FILE_SIZE,
                                            MODULE_NAME, SAVE_ON_COMPLETE,
                                            VERBOSE_OUTPUT)
 from tell_me_your_secrets.logger import create_logger
-from tell_me_your_secrets.utils import col_print, find_extension, get_file_data
+from tell_me_your_secrets.utils import (col_print, find_extension,
+                                        get_available_names, get_file_data)
 
-config_names = col_print('Available Signatures : \n', AVAILABLE_NAMES, COL_PRINT_WIDTH)
+config_names = col_print('Available Signatures : \n', get_available_names())
 
-module_description = '''
+module_description = f'''
 Tell Me Your Secrets
 
 Finds presence of secret files from lots of know signatures for a given folder path.
@@ -35,7 +35,7 @@ Examples usage :
 
 tell-me-your-secrets <PATH_TO_FOLDER> -f aws microsoft crypto digitalocean ssh sql google
 
-'''.format(config_names=config_names)
+'''
 argument_parser = argparse.ArgumentParser(description=module_description)
 argument_parser.formatter_class = argparse.RawDescriptionHelpFormatter
 argument_parser.add_argument('search_path', help='The Root Directory From which the Search for the Key/Pem files is initiated')
@@ -290,7 +290,6 @@ def run_service() -> Tuple[bool, bool]:
 
     with open(config_path) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
-
     module_logger.debug(f'Config contents: \n{config}')
 
     write_path = None
