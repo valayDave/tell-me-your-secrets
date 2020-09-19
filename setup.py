@@ -21,7 +21,7 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     keywords=['Security', 'SSH', 'Secret Keys', 'SysAdmin'],
     install_requires=required,
-    python_requires='>=3.4',
+    python_requires='>=3.6',
     entry_points={
         'console_scripts': ['tell-me-your-secrets=tell_me_your_secrets.__main__:run_service'],
     },
