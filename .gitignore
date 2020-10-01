@@ -10,7 +10,7 @@ Output/
 *.pyc
 .DS_Store
 
-build/
+/build/
 # Setuptools distribution folder.
 /dist/
 
