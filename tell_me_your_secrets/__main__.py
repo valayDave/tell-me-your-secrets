@@ -99,7 +99,10 @@ class RegexSignature(Signature):
             module_logger.warning(f'Unrecognised File Part Access {self.name}')
             return False
         match = self.regex.search(compare_variable)
-        return MatchResult(match is not None, match.group(0))
+
+        if not match:
+            return MatchResult(False, '')
+        return MatchResult(True, match.group(0))
 
 
 class SimpleMatch(Signature):
