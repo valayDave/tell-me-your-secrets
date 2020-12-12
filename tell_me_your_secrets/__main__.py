@@ -4,7 +4,7 @@ import logging
 import os
 import re
 import sys
-from typing import Tuple
+from typing import Tuple, Optional, List
 
 import yaml
 from gitignore_parser import parse_gitignore
@@ -57,6 +57,12 @@ module_logger = create_logger(MODULE_NAME)
 #   - Run the FILTERED Files through signatures.
 
 
+class MatchResult:
+    def __init__(self, result: bool, match: str):
+        self.result = result
+        self.match = match
+
+
 class Signature(metaclass=abc.ABCMeta):
     def __init__(self, part: str, name: str, signature: str):
         self.part = part
@@ -64,7 +70,7 @@ class Signature(metaclass=abc.ABCMeta):
         self.signature = signature
 
     @abc.abstractmethod
-    def match(self, file_path: str, file_content: str) -> bool:
+    def match(self, file_path: str, file_content: str) -> MatchResult:
         """Match Input of the With Signature of the part and Signature and Type of matching."""
         raise NotImplementedError
 
@@ -80,8 +86,7 @@ class RegexSignature(Signature):
         except re.error as e:
             raise TypeError(f'Failed to compile regex for {self.name} `{self.signature}` - {e}')
 
-    def match(self, file_path: str, file_content: str) -> bool:
-        compare_variable = None
+    def match(self, file_path: str, file_content: str) -> MatchResult:
         if self.part == 'extension':
             compare_variable = find_extension(file_path)[1:]
         elif self.part == 'filename':
@@ -93,15 +98,15 @@ class RegexSignature(Signature):
         else:
             module_logger.warning(f'Unrecognised File Part Access {self.name}')
             return False
-
-        return self.regex.search(compare_variable) is not None
+        match = self.regex.search(compare_variable)
+        return MatchResult(match is not None, match.group(0))
 
 
 class SimpleMatch(Signature):
     def __init__(self, part: str, name: str, signature: str):
         super().__init__(part, name, signature)
 
-    def match(self, file_path: str, file_content: str) -> bool:
+    def match(self, file_path: str, file_content: str) -> MatchResult:
         compare_variable = None
         if self.part == 'extension':
             compare_variable = find_extension(file_path)
@@ -114,7 +119,7 @@ class SimpleMatch(Signature):
         else:
             module_logger.warning(f'Unrecognised File Part Access {self.name}')
 
-        return compare_variable == self.signature
+        return MatchResult(compare_variable == self.signature, compare_variable)
 
 
 class SignatureRecognizer:
@@ -131,12 +136,13 @@ class SignatureRecognizer:
         self.blacklisted_paths = [path.format(sep=os.path.sep) for path in config_object['blacklisted_paths']]
         self.red_flag_extensions = config_object.get('red_flag_extensions', [])
         self.max_file_size = config_object.get('max_file_size', MAX_FILE_SIZE)
+        self.whitelisted_strings = config_object.get('whitelisted_strings', [])
         self.write_results = write_results
         self.print_results = print_results
         self.matched_signatures = []
         self.output_path = output_path
         # $ Make Configuration Objects For each of the Signatures in the Config Object.
-        self.signatures = self.load_signatures(config_object.get('signatures', {}), user_filters)
+        self.signatures: List[Signature] = self.load_signatures(config_object.get('signatures', {}), user_filters)
         module_logger.info(f'Secret Sniffer Initialised For Path: {search_path}')
 
     # $ Create the signature objects over here.
@@ -206,10 +212,13 @@ class SignatureRecognizer:
             write_df.to_csv(file_name)
             module_logger.info(f'Completed Writing Results to File : {self.output_path}')
 
-    def run_signatures(self, file_path, content):
+    def run_signatures(self, file_path, content) -> Tuple[Optional[str], Optional[str]]:
         for signature in self.signatures:
             match_result = signature.match(file_path, content)
-            if match_result:
+            if match_result.match:
+                if match_result.match in self.whitelisted_strings:
+                    module_logger.debug(f'Matched {match_result.match} but skipping since it is whitelisted')
+                    return None, None
                 # $ Return the first signature Match.
                 return signature.name, signature.part
         return None, None
@@ -293,11 +302,12 @@ def run_service() -> Tuple[bool, bool]:
 
     with open(config_path) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
-    module_logger.debug(f'Config contents: \n{config}')
+    module_logger.debug(f'Config contents: \n{config}\n')
 
     write_path = None
     if parsed_arguments.write is not None:
         write_path = os.path.abspath(os.path.join(os.path.abspath(sys.path[0]), os.path.abspath(parsed_arguments.write)))
+        module_logger.debug(f'Write path : {write_path}')
 
     user_filters = []
     if parsed_arguments.filter is not None:
