@@ -4,7 +4,7 @@ import logging
 import os
 import re
 import sys
-from typing import Tuple, Optional, List
+from typing import List, Optional, Tuple
 
 import yaml
 from gitignore_parser import parse_gitignore
