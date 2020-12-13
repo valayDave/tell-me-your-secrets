@@ -76,7 +76,7 @@ PiZodLoJ21/7Ph35BYzS43dtL7IrLAP/TarvYbeg
 
     def test_invalid(self):
         signature = RegexSignature('random', 'Random', '')
-        self.assertFalse(signature.match('', ''))
+        self.assertFalse(signature.match('', '').is_match)
 
     def test_invalid_regex(self):
         with self.assertRaises(TypeError):
