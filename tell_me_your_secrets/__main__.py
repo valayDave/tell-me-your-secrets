@@ -58,9 +58,9 @@ module_logger = create_logger(MODULE_NAME)
 
 
 class MatchResult:
-    def __init__(self, result: bool, match: str):
-        self.result = result
-        self.match = match
+    def __init__(self, result: bool, matched_value: Optional[str] = None):
+        self.is_match = result
+        self.matched_value = matched_value
 
 
 class Signature(metaclass=abc.ABCMeta):
@@ -97,11 +97,11 @@ class RegexSignature(Signature):
             compare_variable = file_path
         else:
             module_logger.warning(f'Unrecognised File Part Access {self.name}')
-            return False
+            return MatchResult(False)
         match = self.regex.search(compare_variable)
 
         if not match:
-            return MatchResult(False, '')
+            return MatchResult(False)
         return MatchResult(True, match.group(0))
 
 
@@ -121,6 +121,7 @@ class SimpleMatch(Signature):
             compare_variable = file_path
         else:
             module_logger.warning(f'Unrecognised File Part Access {self.name}')
+            return MatchResult(False)
 
         return MatchResult(compare_variable == self.signature, compare_variable)
 
@@ -218,9 +219,9 @@ class SignatureRecognizer:
     def run_signatures(self, file_path, content) -> Tuple[Optional[str], Optional[str]]:
         for signature in self.signatures:
             match_result = signature.match(file_path, content)
-            if match_result.match:
-                if match_result.match in self.whitelisted_strings:
-                    module_logger.debug(f'Matched {match_result.match} but skipping since it is whitelisted')
+            if match_result.matched_value:
+                if match_result.matched_value in self.whitelisted_strings:
+                    module_logger.debug(f'Matched {match_result.matched_value} but skipping since it is whitelisted')
                     return None, None
                 # $ Return the first signature Match.
                 return signature.name, signature.part
