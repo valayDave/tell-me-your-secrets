@@ -221,7 +221,7 @@ class SignatureRecognizer:
             match_result = signature.match(file_path, content)
             if match_result.matched_value:
                 if match_result.matched_value in self.whitelisted_strings:
-                    module_logger.debug(f'Matched {match_result.matched_value} but skipping since it is whitelisted')
+                    module_logger.debug(f'Signature {signature.name} matched {match_result.matched_value} but skipping since it is whitelisted')
                     return None, None
                 # $ Return the first signature Match.
                 return signature.name, signature.part
