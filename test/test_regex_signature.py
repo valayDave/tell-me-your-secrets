@@ -7,28 +7,28 @@ class RegexSignatureTest(unittest.TestCase):
 
     def test_extension_match(self):
         signature = RegexSignature('extension', 'Potential cryptographic private key', '^key(pair)?$')
-        self.assertTrue(signature.match('/path/to/key.key', ''))
-        self.assertTrue(signature.match('/path/to/key.keypair', ''))
-        self.assertTrue(signature.match('/path/to/.key.keypair', ''))
+        self.assertTrue(signature.match('/path/to/key.key', '').is_match)
+        self.assertTrue(signature.match('/path/to/key.keypair', '').is_match)
+        self.assertTrue(signature.match('/path/to/.key.keypair', '').is_match)
 
     def test_extension_no_match(self):
         signature = RegexSignature('extension', 'Potential cryptographic private key', '^key(pair)?$')
-        self.assertFalse(signature.match('/path/to/file.txt', ''))
-        self.assertFalse(signature.match('/path/to/file', ''))
-        self.assertFalse(signature.match('/path/to/.file', ''))
+        self.assertFalse(signature.match('/path/to/file.txt', '').is_match)
+        self.assertFalse(signature.match('/path/to/file', '').is_match)
+        self.assertFalse(signature.match('/path/to/.file', '').is_match)
 
     def test_filename_match(self):
         signature = RegexSignature('filename', 'git-credential-store helper credentials file', r'^\.?git-credentials$')
-        self.assertTrue(signature.match('/path/to/.git-credentials', ''))
-        self.assertTrue(signature.match('/path/to/git-credentials', ''))
+        self.assertTrue(signature.match('/path/to/.git-credentials', '').is_match)
+        self.assertTrue(signature.match('/path/to/git-credentials', '').is_match)
 
     def test_filename_no_match(self):
         signature = RegexSignature('filename', 'git-credential-store helper credentials file', r'^\.?git-credentials$')
-        self.assertFalse(signature.match('/path/to/git-credentials-1', ''))
-        self.assertFalse(signature.match('/path/to/.git', ''))
+        self.assertFalse(signature.match('/path/to/git-credentials-1', '').is_match)
+        self.assertFalse(signature.match('/path/to/.git', '').is_match)
 
     def test_contents_match(self):
-        signature = RegexSignature('contents', 'Contains a private ke',
+        signature = RegexSignature('contents', 'Contains a private key',
                                    '-----BEGIN (EC|RSA|DSA|OPENSSH) PRIVATE KEY----')
         self.assertTrue(signature.match('/path/to/key', '''
         -----BEGIN RSA PRIVATE KEY-----
@@ -46,26 +46,37 @@ elOmA0y+8FoQwaEkXCzTtp43w0Kl/1NitPjowxv3i5VoJBBBkcjtU40dUjE71Q81
 sz+etCafrmeRGjFzAkAbSUeDF9K9SO1XyPc5G3WXzaYmOkhGs7il+H8jGKlEizBd
 PiZodLoJ21/7Ph35BYzS43dtL7IrLAP/TarvYbeg
 -----END RSA PRIVATE KEY-----
-        '''))
+        ''').is_match)
+
+    def test_contents_matched_extended(self):
+        signature = RegexSignature('contents', 'Facebook access token',
+                                   'EAACEdEose0cBA[0-9A-Za-z]+')
+
+        result = signature.match('path/to/config.py', ''''
+        secret_key = 'EAACEdEose0cBAsjsjs'
+        ''')
+
+        self.assertTrue(result.is_match)
+        self.assertEqual('EAACEdEose0cBAsjsjs', result.matched_value)
 
     def test_contents_no_match(self):
         signature = RegexSignature('contents', 'Contains a private ke',
                                    '-----BEGIN (EC|RSA|DSA|OPENSSH) PRIVATE KEY----')
-        self.assertFalse(signature.match('/path/to/key', '-----BEGIN PRIVATE KEY-----'))
-        self.assertFalse(signature.match('/path/to/.git', ''))
+        self.assertFalse(signature.match('/path/to/key', '-----BEGIN PRIVATE KEY-----').is_match)
+        self.assertFalse(signature.match('/path/to/.git', '').is_match)
 
     def test_path_match(self):
         signature = RegexSignature('path', 'GitHub Hub command-line client configuration file', 'config/hub$')
-        self.assertTrue(signature.match('/path/to/config/hub', ''))
+        self.assertTrue(signature.match('/path/to/config/hub', '').is_match)
 
     def test_path_no_match(self):
         signature = RegexSignature('path', 'GitHub Hub command-line client configuration file', 'config/hub$')
-        self.assertFalse(signature.match('/path/to/config/hub/more', ''))
-        self.assertFalse(signature.match('/path/to/confi/hub', ''))
+        self.assertFalse(signature.match('/path/to/config/hub/more', '').is_match)
+        self.assertFalse(signature.match('/path/to/confi/hub', '').is_match)
 
     def test_invalid(self):
         signature = RegexSignature('random', 'Random', '')
-        self.assertFalse(signature.match('', ''))
+        self.assertFalse(signature.match('', '').is_match)
 
     def test_invalid_regex(self):
         with self.assertRaises(TypeError):

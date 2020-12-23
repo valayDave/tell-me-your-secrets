@@ -45,6 +45,7 @@ The `config.yml` file contains the configuration for the module. All signatures 
 blacklisted_extensions: [] # list of extensions to ignore
 blacklisted_paths: [] # list of paths to ignore
 red_flag_extensions: [] # list of Extensions not be ignored
+whitelisted_strings: [] # Add strings which should always be ignored
 signatures: # list of signatures to check
   - part: '' # either filename, extension, path or contents
     match: '' # simple text comparison (if no regex element)
