@@ -1,7 +1,8 @@
 import unittest
 from typing import Optional
 
-from tell_me_your_secrets.__main__ import SignatureRecognizer, Signature, MatchResult
+from tell_me_your_secrets.__main__ import (MatchResult, Signature,
+                                           SignatureRecognizer)
 
 
 class MockSignature(Signature):
@@ -32,5 +33,3 @@ class RunSignaturesTest(unittest.TestCase):
         result = signature_recognizer.run_signatures('file/with/issues', 'dodgy-content')
         self.assertIsNone(result[0])
         self.assertIsNone(result[1])
-
-
