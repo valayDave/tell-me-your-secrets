@@ -137,7 +137,7 @@ class SignatureRecognizer:
                 module_logger.debug(f'Using gitignore file: {gitignore_file}')
                 self.gitignore_matcher = parse_gitignore(gitignore_file)
         self.blacklisted_extensions = config_object.get('blacklisted_extensions', [])
-        self.blacklisted_paths = [path.format(sep=os.path.sep) for path in config_object['blacklisted_paths']]
+        self.blacklisted_paths = [path.format(sep=os.path.sep) for path in config_object.get('blacklisted_paths', [])]
         self.red_flag_extensions = config_object.get('red_flag_extensions', [])
         self.max_file_size = config_object.get('max_file_size', MAX_FILE_SIZE)
         self.whitelisted_strings = config_object.get('whitelisted_strings', [])
@@ -219,9 +219,10 @@ class SignatureRecognizer:
     def run_signatures(self, file_path, content) -> Tuple[Optional[str], Optional[str]]:
         for signature in self.signatures:
             match_result = signature.match(file_path, content)
-            if match_result.matched_value:
+            if match_result.is_match:
                 if match_result.matched_value in self.whitelisted_strings:
-                    module_logger.debug(f'Signature {signature.name} matched {match_result.matched_value} but skipping since it is whitelisted')
+                    module_logger.debug(f'Signature {signature.name} matched {match_result.matched_value} but skipping'
+                                        f' since it is whitelisted')
                     continue
                 # $ Return the first signature Match.
                 return signature.name, signature.part
