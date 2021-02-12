@@ -1,8 +1,10 @@
 import logging
 
+from tell_me_your_secrets import defaults
 
-def create_logger(logger_name: str, level: int = logging.INFO):
-    custom_logger = logging.getLogger(logger_name)
+
+def setup_logger(level: int = logging.INFO):
+    custom_logger = logging.getLogger(defaults.MODULE_NAME)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     ch = logging.StreamHandler()
     ch.setLevel(level)
@@ -10,4 +12,6 @@ def create_logger(logger_name: str, level: int = logging.INFO):
     custom_logger.addHandler(ch)
     custom_logger.setLevel(level)
 
-    return custom_logger
+
+def get_logger():
+    return logging.getLogger(defaults.MODULE_NAME)
