@@ -19,3 +19,4 @@
 
 -   [ ] Tests have been added to verify that the new code works (if possible)
 -   [ ] Documentation has been updated to reflect changes
+-   [ ] Changelog has been updated to reflect changes
