@@ -1,4 +1,3 @@
-import logging
 from typing import Optional, Tuple
 
 from tell_me_your_secrets.logger import get_logger

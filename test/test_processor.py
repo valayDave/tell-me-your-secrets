@@ -1,8 +1,7 @@
 import unittest
 from typing import Optional
 
-from tell_me_your_secrets.__main__ import (MatchResult, Signature,
-                                           SignatureRecognizer)
+from tell_me_your_secrets.__main__ import MatchResult, Signature
 from tell_me_your_secrets.processor import Processor
 
 
