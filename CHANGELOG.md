@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.2.0 (Unreleased)
+## vX.X.X (Unreleased)
 
 ### Added
 
@@ -31,7 +31,6 @@
 
 - Dropped support for Python 3.4 and 3.5 - it was broken before, but now it's explicit
 
-
 ## v1.78 (2020-08-11)
 
-Before semantic versioning
+Before semantic versioning.
