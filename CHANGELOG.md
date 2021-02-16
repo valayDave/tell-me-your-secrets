@@ -4,7 +4,11 @@
 
 ### Added
 
-- 
+- Improved processing to use multiprocessing (#35)
+
+### Fixed
+
+- Fixed bug with gitignore flag and non-existent `.gitignore` file (#35)
 
 ## v2.1.1 (2020-12-28)
 
