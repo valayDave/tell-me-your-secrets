@@ -204,7 +204,9 @@ class SignatureRecognizer:
 
         with Pool(processes=self.processes_count) as pool:
             results = pool.map(processor.process_file, filtered_files)
-            self.matched_signatures = self.matched_signatures + [result for result in results if len(result) != 0]
+            results = [item for sublist in results for item in sublist]
+            for result in results:
+                self.matched_signatures.append(result)
 
     def write_results_to_file(self):
         if len(self.matched_signatures) > 0:
