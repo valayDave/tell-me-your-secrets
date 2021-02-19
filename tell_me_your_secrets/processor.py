@@ -23,7 +23,7 @@ class Processor:
         self.whitelisted_strings = whitelisted_strings
         self.print_results = print_results
 
-    def process_file(self, possible_compromised_path: str) -> list:
+    def process_file(self, possible_compromised_path: str) -> List[SignatureMatch]:
         module_logger.debug(f'Opening File : {possible_compromised_path}')
         file_content = get_file_data(possible_compromised_path)
         if file_content is None:
