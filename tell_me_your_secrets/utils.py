@@ -1,5 +1,6 @@
 import math
 import pathlib
+from typing import Optional
 
 import yaml
 

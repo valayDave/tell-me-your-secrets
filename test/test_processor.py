@@ -23,6 +23,7 @@ class RunSignaturesTest(unittest.TestCase):
         ]
         processor = Processor(signatures, [], False)
 
-        result = processor.run_signatures('file/with/issues', 'dodgy-content')
-        self.assertEqual('Mock Signature', result[0])
-        self.assertEqual('file', result[1])
+        results = processor.run_signatures('file/with/issues', 'dodgy-content')
+        self.assertEqual(1, len(results))
+        self.assertEqual('Mock Signature', results[0].name)
+        self.assertEqual('file', results[0].part)
