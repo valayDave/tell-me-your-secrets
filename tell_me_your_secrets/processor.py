@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import List
 
 from tell_me_your_secrets.logger import get_logger
@@ -7,11 +6,15 @@ from tell_me_your_secrets.utils import get_file_data
 module_logger = get_logger()
 
 
-@dataclass
 class SignatureMatch:
     name: str
     part: str
     path: str
+
+    def __init__(self, name: str, part: str, path: str):
+        self.name = name
+        self.part = part
+        self.path = path
 
 
 class Processor:
