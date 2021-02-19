@@ -8,7 +8,7 @@
 
 ### Improved
 
-- Return all matches, not just first within file
+- Return all signature matches within a file (#37)
 
 ### Fixed
 
