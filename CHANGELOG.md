@@ -6,6 +6,10 @@
 
 - Improved processing to use multiprocessing (#35)
 
+### Improved
+
+- Return all signature matches within a file (#37)
+
 ### Fixed
 
 - Fixed bug with gitignore flag and non-existent `.gitignore` file (#35)
