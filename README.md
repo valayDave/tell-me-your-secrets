@@ -2,6 +2,8 @@
 
 ![CI](https://github.com/valayDave/tell-me-your-secrets/workflows/CI/badge.svg)
 [![PyPI version](https://badge.fury.io/py/tell-me-your-secrets.svg)](https://badge.fury.io/py/tell-me-your-secrets)
+![PyPI downloads](https://img.shields.io/pypi/dm/tell-me-your-secrets)
+
 
 A simple module which finds files with different secrets keys present inside a directory. Secrets derived from 120 different signatures.
 
