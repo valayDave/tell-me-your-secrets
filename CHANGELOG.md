@@ -31,7 +31,7 @@
 ### Added
 
 - Added whitelisted string functionality (#31)
-- Added dependabot configuration (#30) 
+- Added dependabot configuration (#30)
 - Added Python 3.9 to test matrix (#28)
 
 ## v2.0.0 (2020-10-01)
