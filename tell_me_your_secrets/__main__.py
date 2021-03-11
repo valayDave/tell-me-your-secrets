@@ -210,7 +210,7 @@ class SignatureRecognizer:
 
     def write_results_to_file(self):
         if len(self.matched_signatures) > 0:
-            write_df = DataFrame(self.matched_signatures)
+            write_df = DataFrame(map(vars, self.matched_signatures))
             if '.csv' not in self.output_path:
                 self.output_path += '.csv'
             file_name = self.output_path

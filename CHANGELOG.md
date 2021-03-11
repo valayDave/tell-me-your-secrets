@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.2.1 (2020-03-11)
+
+### Fixed
+
+- Fixed regression with saving results object
+
 ## v2.2.0 (2020-03-05)
 
 ### Added
