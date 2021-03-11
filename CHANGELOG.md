@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- Fixed regression with saving results object
+- Fixed regression with saving results object (#40)
 
 ## v2.2.0 (2020-03-05)
 
