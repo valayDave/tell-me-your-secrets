@@ -4,7 +4,7 @@
 
 ### Added
 
-- Added `--version` flag to print current version ()
+- Added `--version` flag to print current version (#43)
 
 ## v2.2.1 (2020-03-11)
 
