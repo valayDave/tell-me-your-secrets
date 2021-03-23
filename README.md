@@ -9,16 +9,22 @@ A simple module which finds files with different secrets keys present inside a d
 
 ## Installation
 
-### Via Pip
+With [pipx](https://pipxproject.github.io/pipx/):
+
+```bash
+pipx install tell-me-your-secrets
+```
+
+With Pip:
 
 ```bash
 pip install tell-me-your-secrets
 ```
 
-### From Source
+From source:
 
 ```bash
-git clone git@github.com:valayDave/tell-me-your-secrets.git``
+git clone git@github.com:valayDave/tell-me-your-secrets.git
 cd tell-me-your-secrets
 python3 -m venv .env
 source .env/bin/activate
