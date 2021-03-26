@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.3.0 (Unreleased)
+
+### Added
+
+- Added `--version` flag to print current version (#43)
+
 ## v2.2.1 (2020-03-11)
 
 ### Fixed

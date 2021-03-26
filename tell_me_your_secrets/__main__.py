@@ -13,6 +13,7 @@ import yaml
 from gitignore_parser import parse_gitignore
 from pandas import DataFrame
 
+import tell_me_your_secrets
 from tell_me_your_secrets.defaults import (DEFAULT_CONFIG_PATH,
                                            DEFAULT_OUTPUT_PATH, MAX_FILE_SIZE,
                                            SAVE_ON_COMPLETE, VERBOSE_OUTPUT)
@@ -39,16 +40,21 @@ Examples usage :
 tell-me-your-secrets <PATH_TO_FOLDER> -f aws microsoft crypto digitalocean ssh sql google
 
 '''
-argument_parser = argparse.ArgumentParser(description=module_description)
-argument_parser.formatter_class = argparse.RawDescriptionHelpFormatter
-argument_parser.add_argument('search_path', help='The Root Directory From which the Search for the Key/Pem files is initiated')
-argument_parser.add_argument('-c', '--config', help='Path To Another config.yml for Extracting The Data')
-argument_parser.add_argument('-w', '--write', help='Path of the csv File to which results are written')
-argument_parser.add_argument('-f', '--filter', help='Filter the Signatures you want to apply. ', nargs='+')
+argument_parser = argparse.ArgumentParser(
+    prog='tell-me-your-secrets',
+    description=module_description,
+    formatter_class=argparse.RawDescriptionHelpFormatter
+)
+argument_parser.add_argument('search_path', help='The root path to search from')
+argument_parser.add_argument('-c', '--config', help='Path to alternative config.yml')
+argument_parser.add_argument('-w', '--write', help='Path of the CSV file to which results are written')
+argument_parser.add_argument('-f', '--filter', help='Filter the signatures you want to apply. ', nargs='+')
 argument_parser.add_argument('-v', '--verbose', help='Enable debug level logging. ', action='store_true')
 argument_parser.add_argument('-e', '--exit', help='Exit non-zero on results found. ', action='store_true')
 argument_parser.add_argument('-g', '--gitignore', help='Ignore .gitignore mapped objects. ', action='store_true')
 argument_parser.add_argument('-p', '--processes', help='Number of processes to use. ', type=int, default=multiprocessing.cpu_count())
+argument_parser.add_argument('--version', help='Print version information', action='version',
+                             version=f'%(prog)s {tell_me_your_secrets.__version__}')
 module_logger = get_logger()
 
 # Process:
