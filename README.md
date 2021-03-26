@@ -69,6 +69,21 @@ signatures: # list of signatures to check
 - Ensure that the PR description clearly describes the behaviour of the change
 - Ensure that CI tests pass
 
+### Setup environment
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-test.txt
+```
+#### Pre-commit
+
+We leverage the [pre-commit](https://pre-commit.com/) framework.
+
+Install git hooks with `pre-commit install`.
+
+Run the checks `pre-commit run --all-files`.
+
 ## Module Inspiration
 
 As a sysadmin, when machines are provisioned on the cloud to developers, some recklessly leave secret keys and files behind on those machines. This module helps find such leakages.
