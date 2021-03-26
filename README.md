@@ -2,21 +2,29 @@
 
 ![CI](https://github.com/valayDave/tell-me-your-secrets/workflows/CI/badge.svg)
 [![PyPI version](https://badge.fury.io/py/tell-me-your-secrets.svg)](https://badge.fury.io/py/tell-me-your-secrets)
+![PyPI downloads](https://img.shields.io/pypi/dm/tell-me-your-secrets)
+
 
 A simple module which finds files with different secrets keys present inside a directory. Secrets derived from 120 different signatures.
 
 ## Installation
 
-### Via Pip
+With [pipx](https://pipxproject.github.io/pipx/):
+
+```bash
+pipx install tell-me-your-secrets
+```
+
+With Pip:
 
 ```bash
 pip install tell-me-your-secrets
 ```
 
-### From Source
+From source:
 
 ```bash
-git clone git@github.com:valayDave/tell-me-your-secrets.git``
+git clone git@github.com:valayDave/tell-me-your-secrets.git
 cd tell-me-your-secrets
 python3 -m venv .env
 source .env/bin/activate
