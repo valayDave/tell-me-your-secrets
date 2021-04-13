@@ -5,6 +5,7 @@
 ### Added
 
 - Added `--version` flag to print current version (#43)
+- Added support for the new GitHub authentication token format (#45)
 
 ## v2.2.1 (2020-03-11)
 
