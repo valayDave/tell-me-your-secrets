@@ -9,16 +9,22 @@ A simple module which finds files with different secrets keys present inside a d
 
 ## Installation
 
-### Via Pip
+With [pipx](https://pipxproject.github.io/pipx/):
+
+```bash
+pipx install tell-me-your-secrets
+```
+
+With Pip:
 
 ```bash
 pip install tell-me-your-secrets
 ```
 
-### From Source
+From source:
 
 ```bash
-git clone git@github.com:valayDave/tell-me-your-secrets.git``
+git clone git@github.com:valayDave/tell-me-your-secrets.git
 cd tell-me-your-secrets
 python3 -m venv .env
 source .env/bin/activate
@@ -62,6 +68,21 @@ signatures: # list of signatures to check
 - Be sure to add tests for changes or additional functionality
 - Ensure that the PR description clearly describes the behaviour of the change
 - Ensure that CI tests pass
+
+### Setup environment
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-test.txt
+```
+#### Pre-commit
+
+We leverage the [pre-commit](https://pre-commit.com/) framework.
+
+Install git hooks with `pre-commit install`.
+
+Run the checks `pre-commit run --all-files`.
 
 ## Module Inspiration
 

@@ -13,11 +13,12 @@ import yaml
 from gitignore_parser import parse_gitignore
 from pandas import DataFrame
 
+import tell_me_your_secrets
 from tell_me_your_secrets.defaults import (DEFAULT_CONFIG_PATH,
                                            DEFAULT_OUTPUT_PATH, MAX_FILE_SIZE,
                                            SAVE_ON_COMPLETE, VERBOSE_OUTPUT)
 from tell_me_your_secrets.logger import get_logger, setup_logger
-from tell_me_your_secrets.processor import Processor
+from tell_me_your_secrets.processor import Processor, SignatureMatch
 from tell_me_your_secrets.utils import (col_print, find_extension,
                                         get_available_names)
 
@@ -39,16 +40,21 @@ Examples usage :
 tell-me-your-secrets <PATH_TO_FOLDER> -f aws microsoft crypto digitalocean ssh sql google
 
 '''
-argument_parser = argparse.ArgumentParser(description=module_description)
-argument_parser.formatter_class = argparse.RawDescriptionHelpFormatter
-argument_parser.add_argument('search_path', help='The Root Directory From which the Search for the Key/Pem files is initiated')
-argument_parser.add_argument('-c', '--config', help='Path To Another config.yml for Extracting The Data')
-argument_parser.add_argument('-w', '--write', help='Path of the csv File to which results are written')
-argument_parser.add_argument('-f', '--filter', help='Filter the Signatures you want to apply. ', nargs='+')
+argument_parser = argparse.ArgumentParser(
+    prog='tell-me-your-secrets',
+    description=module_description,
+    formatter_class=argparse.RawDescriptionHelpFormatter
+)
+argument_parser.add_argument('search_path', help='The root path to search from')
+argument_parser.add_argument('-c', '--config', help='Path to alternative config.yml')
+argument_parser.add_argument('-w', '--write', help='Path of the CSV file to which results are written')
+argument_parser.add_argument('-f', '--filter', help='Filter the signatures you want to apply. ', nargs='+')
 argument_parser.add_argument('-v', '--verbose', help='Enable debug level logging. ', action='store_true')
 argument_parser.add_argument('-e', '--exit', help='Exit non-zero on results found. ', action='store_true')
 argument_parser.add_argument('-g', '--gitignore', help='Ignore .gitignore mapped objects. ', action='store_true')
 argument_parser.add_argument('-p', '--processes', help='Number of processes to use. ', type=int, default=multiprocessing.cpu_count())
+argument_parser.add_argument('--version', help='Print version information', action='version',
+                             version=f'%(prog)s {tell_me_your_secrets.__version__}')
 module_logger = get_logger()
 
 # Process:
@@ -151,7 +157,7 @@ class SignatureRecognizer:
         self.whitelisted_strings = config_object.get('whitelisted_strings', [])
         self.write_results = write_results
         self.print_results = print_results
-        self.matched_signatures = []
+        self.matched_signatures: List[SignatureMatch] = []
         self.output_path = output_path
         # $ Make Configuration Objects For each of the Signatures in the Config Object.
         self.signatures: List[Signature] = self.load_signatures(config_object.get('signatures', {}), user_filters or [])
@@ -161,7 +167,7 @@ class SignatureRecognizer:
     @staticmethod
     def load_signatures(raw_signatures: dict, user_filters: list) -> list:
         chosen_configs = []
-        parsed_signatures = []
+        parsed_signatures: List[Signature] = []
         for signature_obj in raw_signatures:
             # $ Ignore Object if no Name/Part.
             if 'name' not in signature_obj or 'part' not in signature_obj:
@@ -199,14 +205,14 @@ class SignatureRecognizer:
     def _get_time(self) -> float:
         return round(time.time() - self.start_time, 2)
 
-    def process(self, filtered_files: list):
+    def process(self, filtered_files: List[str]):
         processor = Processor(self.signatures, self.whitelisted_strings, self.print_results)
 
         with Pool(processes=self.processes_count) as pool:
-            results = pool.map(processor.process_file, filtered_files)
-            results = [item for sublist in results for item in sublist]
+            results: List[List[SignatureMatch]] = pool.map(processor.process_file, filtered_files)
             for result in results:
-                self.matched_signatures.append(result)
+                for match in result:
+                    self.matched_signatures.append(match)
 
     def write_results_to_file(self):
         if len(self.matched_signatures) > 0:
@@ -253,7 +259,7 @@ class SignatureRecognizer:
 
         return False
 
-    def get_files(self, search_path: str) -> list:
+    def get_files(self, search_path: str) -> List[str]:
         """ Get the files that should be tested. """
         files = []
         for (dir_path, dir_names, filenames) in os.walk(search_path):
@@ -268,16 +274,13 @@ class SignatureRecognizer:
         return files
 
 
-def init_signature(config: dict, search_path: str, write_path: str, user_filters: list, use_gitignore: bool,
+def init_signature(config: dict, search_path: str, write_path: Optional[str], user_filters: list, use_gitignore: bool,
                    processes_count: int):
-    # $ todo : Create the signature Object with the methods that
     if write_path:
         return SignatureRecognizer(config, search_path, use_gitignore, processes_count, write_results=True,
                                    output_path=write_path, user_filters=user_filters)
 
     return SignatureRecognizer(config, search_path, use_gitignore, processes_count, user_filters=user_filters)
-
-# $ Gets all subpaths for the directory.
 
 
 def run_service() -> Tuple[bool, bool]:

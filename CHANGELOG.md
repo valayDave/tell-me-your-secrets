@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.3.0 (Unreleased)
+
+### Added
+
+- Added `--version` flag to print current version (#43)
+- Added support for the new GitHub authentication token format (#45)
+
 ## v2.2.1 (2020-03-11)
 
 ### Fixed
@@ -31,7 +38,7 @@
 ### Added
 
 - Added whitelisted string functionality (#31)
-- Added dependabot configuration (#30) 
+- Added dependabot configuration (#30)
 - Added Python 3.9 to test matrix (#28)
 
 ## v2.0.0 (2020-10-01)
