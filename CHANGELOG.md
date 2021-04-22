@@ -1,19 +1,19 @@
 # Changelog
 
-## v2.3.0 (Unreleased)
+## v2.3.0 (2021-04-22)
 
 ### Added
 
 - Added `--version` flag to print current version (#43)
 - Added support for the new GitHub authentication token format (#45)
 
-## v2.2.1 (2020-03-11)
+## v2.2.1 (2021-03-11)
 
 ### Fixed
 
 - Fixed regression with saving results object (#40)
 
-## v2.2.0 (2020-03-05)
+## v2.2.0 (2021-03-05)
 
 ### Added
 
