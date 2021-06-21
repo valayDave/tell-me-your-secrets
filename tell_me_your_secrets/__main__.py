@@ -303,7 +303,7 @@ def run_service() -> Tuple[bool, bool]:
     module_logger.debug(f'Running config from path: {config_path}')
 
     with open(config_path) as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
+        config = yaml.safe_load(f)
     module_logger.debug(f'Config contents: \n{config}\n')
 
     write_path = None
