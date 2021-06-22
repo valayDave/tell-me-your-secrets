@@ -1,5 +1,11 @@
 # Changelog
 
+## Next
+
+### Improved
+
+- Changes yaml loading to use the safe loader (#48)
+
 ## v2.3.0 (2021-04-22)
 
 ### Added

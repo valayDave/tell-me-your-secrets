@@ -14,7 +14,7 @@ def get_available_names() -> list:
     """
     names = []
     with open(DEFAULT_CONFIG_PATH) as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
+        config = yaml.safe_load(f)
 
     for signature in config.get('signatures', []):
         name = signature.get('name')

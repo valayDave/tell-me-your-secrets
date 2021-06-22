@@ -11,6 +11,6 @@ class SignatureLoadTest(unittest.TestCase):
     def test_load_default_config(self):
         """ Test to ensure default config is valid. """
         with open(DEFAULT_CONFIG_PATH) as f:
-            config = yaml.load(f, Loader=yaml.FullLoader)
+            config = yaml.safe_load(f)
             signatures = SignatureRecognizer.load_signatures(config['signatures'], [])
             self.assertTrue(len(signatures) > 0)
