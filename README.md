@@ -2,6 +2,7 @@
 
 ![CI](https://github.com/valayDave/tell-me-your-secrets/workflows/CI/badge.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b125fc056a22454db44a73f53efee1fb)](https://app.codacy.com/gh/valayDave/tell-me-your-secrets?utm_source=github.com&utm_medium=referral&utm_content=valayDave/tell-me-your-secrets&utm_campaign=Badge_Grade_Settings)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/54d135292db445ec8eb988b57c747dc2)](https://www.codacy.com/gh/valayDave/tell-me-your-secrets/dashboard?utm_source=github.com&utm_medium=referral&utm_content=valayDave/tell-me-your-secrets&utm_campaign=Badge_Coverage)
 [![PyPI version](https://badge.fury.io/py/tell-me-your-secrets.svg)](https://badge.fury.io/py/tell-me-your-secrets)
 ![PyPI downloads](https://img.shields.io/pypi/dm/tell-me-your-secrets)
 
