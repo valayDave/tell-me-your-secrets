@@ -5,6 +5,7 @@
 ### Improved
 
 - Changes yaml loading to use the safe loader (#48)
+- Added support for more Slack token formats (#51)
 
 ## v2.3.0 (2021-04-22)
 
