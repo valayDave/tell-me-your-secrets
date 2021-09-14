@@ -1,6 +1,6 @@
 # Changelog
 
-## Next
+## v2.4.0 (2021-09-14)
 
 ### Improved
 
