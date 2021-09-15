@@ -2,10 +2,17 @@
 
 ## v2.4.0 (2021-09-14)
 
+### Added
+
+-   Added support for more Slack token formats
+
 ### Improved
 
 -   Changes yaml loading to use the safe loader (#48)
--   Added support for more Slack token formats (#51)
+ (#51)
+
+###  Fixed
+
 -   Fix `MANIFEST.in` (#52)
 -   Fix output of unique rule names + tidy `setup.py` (#53)
 
