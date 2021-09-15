@@ -6,6 +6,11 @@ import yaml
 from tell_me_your_secrets.defaults import COL_PRINT_WIDTH, DEFAULT_CONFIG_PATH
 
 
+def load_default_config() -> dict:
+    with open(DEFAULT_CONFIG_PATH) as f:
+        return yaml.safe_load(f)
+
+
 def get_available_names() -> list:
     """
     Get list of available names from default configuration.
@@ -13,15 +18,14 @@ def get_available_names() -> list:
     :return: List of names
     """
     names = []
-    with open(DEFAULT_CONFIG_PATH) as f:
-        config = yaml.safe_load(f)
 
+    config = load_default_config()
     for signature in config.get('signatures', []):
         name = signature.get('name')
         if name:
             names.append(name)
 
-    return names
+    return list(set(names))
 
 
 def col_print(title: str, array: list, term_width: int = COL_PRINT_WIDTH, pad_size: int = 1) -> str:

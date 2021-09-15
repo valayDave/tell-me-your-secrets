@@ -1,7 +1,8 @@
-import os
 from typing import List
 
 import setuptools
+
+from tell_me_your_secrets import __version__
 
 
 def get_long_description() -> str:
@@ -14,17 +15,10 @@ def get_required() -> List[str]:
         return fh.read().splitlines()
 
 
-def get_version():
-    with open(os.path.join('tell_me_your_secrets', '__init__.py')) as fh:
-        for line in fh:
-            if line.startswith('__version__ = '):
-                return line.split()[-1].strip().strip("'")
-
-
 setuptools.setup(
     name='tell_me_your_secrets',
     packages=setuptools.find_packages(),
-    version=get_version(),
+    version=__version__,
     license='MIT',
     description='A simple module which finds files with different secrets keys present inside a directory.'
                 'Secrets derived from 120 different signatures.',
@@ -46,8 +40,6 @@ setuptools.setup(
         'Topic :: Security',
         'Topic :: System :: Systems Administration',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
