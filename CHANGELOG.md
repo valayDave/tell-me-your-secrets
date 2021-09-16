@@ -4,12 +4,11 @@
 
 ### Added
 
--   Added support for more Slack token formats
+-   Added support for more Slack token formats (#51)
 
 ### Improved
 
 -   Changes yaml loading to use the safe loader (#48)
- (#51)
 
 ### Fixed
 
