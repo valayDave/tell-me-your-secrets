@@ -11,7 +11,7 @@
 -   Changes yaml loading to use the safe loader (#48)
  (#51)
 
-###  Fixed
+### Fixed
 
 -   Fix `MANIFEST.in` (#52)
 -   Fix output of unique rule names + tidy `setup.py` (#53)
