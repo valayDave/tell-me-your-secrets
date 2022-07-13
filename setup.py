@@ -32,7 +32,7 @@ setuptools.setup(
     install_requires=get_required(),
     python_requires='>=3.6',
     entry_points={
-        'console_scripts': ['tell-me-your-secrets=tell_me_your_secrets.__main__:run_service'],
+        'console_scripts': ['tell-me-your-secrets=tell_me_your_secrets.__main__:main'],
     },
     classifiers=[
         'Development Status :: 4 - Beta',
