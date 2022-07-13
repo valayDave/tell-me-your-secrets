@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.4.1 (Unreleased)
+
+### Fixed
+
+-   Fix exit code when no issues found (#56)
+
 ## v2.4.0 (2021-09-15)
 
 ### Added

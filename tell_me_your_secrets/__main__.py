@@ -327,10 +327,13 @@ def run_service() -> Tuple[bool, bool]:
     return len(sig_recognizer.matched_signatures) > 0, parsed_arguments.exit
 
 
-if __name__ == '__main__':
+def main():
     has_matches, exit_val = run_service()
     if has_matches and exit_val:
         exit(1)
 
     exit(0)
-# $ Move Signature.go and Match.go into this to make this work.
+
+
+if __name__ == '__main__':
+    main()
