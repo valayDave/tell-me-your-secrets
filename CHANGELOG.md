@@ -2,11 +2,9 @@
 
 ## v2.4.1 (Unreleased)
 
+### Fixed
+
 -   Fix exit code when no issues found (#56)
-
-### Added
-
--   Added support for more Slack token formats (#51)
 
 ## v2.4.0 (2021-09-15)
 
