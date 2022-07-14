@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9, 3.8, 3.7, 3.6]
+        python-version: ['3.9', '3.8', '3.7']
     env:
       IS_COVERAGE_ALLOWED: ${{ secrets.CODACY_PROJECT_TOKEN != '' }}
       IS_MASTER_BRANCH: ${{ github.ref == 'refs/heads/master' }}
@@ -33,7 +33,7 @@ jobs:
     - name: Test with pytest
       run: pytest --cov-report xml --cov=tell_me_your_secrets test/
     - name: Upload coverage
-      if: ${{ matrix.python-version == 3.9 && env.IS_COVERAGE_ALLOWED == 'true' && env.IS_MASTER_BRANCH == 'true' }}
+      if: ${{ matrix.python-version == '3.9' && env.IS_COVERAGE_ALLOWED == 'true' && env.IS_MASTER_BRANCH == 'true' }}
       uses: codacy/codacy-coverage-reporter-action@master
       with:
         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
@@ -45,12 +45,12 @@ jobs:
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: '3.9'
     - name: Install poetry
       uses: abatilo/actions-poetry@v2.0.0
       with:
-        poetry-version: 1.1.12
+        poetry-version: '1.1.12'
     - name: Install dependencies
       run: poetry install
     - name: Lint
-      run: pre-commit run --all-files
+      run: poetry run pre-commit run --all-files
