@@ -13,9 +13,9 @@ keywords = ["Security", "SSH", "Secret Keys", "SysAdmin"]
 tell-me-your-secrets = "tell_me_your_secrets.__main__:main"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7.1"
 PyYAML = "^6.0"
-pandas = "^1.4"
+pandas = "^1.3"
 gitignore-parser = "^0.0.8"
 single-source = "^0.3.0"
 
