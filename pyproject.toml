@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "tell-me-your-secrets"
+version = "2.4.1"
+description = "A simple module which finds files with different secrets keys present inside a directory"
+authors = ["Valay Dave <valaygaurang@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/valayDave/tell-me-your-secrets"
+repository = "https://github.com/valayDave/tell-me-your-secrets"
+keywords = ["Security", "SSH", "Secret Keys", "SysAdmin"]
+
+[tool.poetry.scripts]
+tell-me-your-secrets = "tell_me_your_secrets.__main__:main"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+PyYAML = "^6.0"
+pandas = "^1.4"
+gitignore-parser = "^0.0.8"
+single-source = "^0.3.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
+flake8 = "^4.0.1"
+flake8-isort = "^4.1.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
