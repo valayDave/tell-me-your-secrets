@@ -6,10 +6,6 @@
 
 -   Dropped support for Python 3.6 since it's end of life (#60)
 
-### Fixed
-
--   Fix exit code when no issues found (#56)
-
 ## v2.4.1 (2022-07-14)
 
 ### Fixed
