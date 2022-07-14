@@ -31,7 +31,7 @@ jobs:
     - name: Install dependencies
       run: poetry install
     - name: Test with pytest
-      run: pytest --cov-report xml --cov=tell_me_your_secrets test/
+      run: poetry run pytest --cov-report xml --cov=tell_me_your_secrets test/
     - name: Upload coverage
       if: ${{ matrix.python-version == '3.9' && env.IS_COVERAGE_ALLOWED == 'true' && env.IS_MASTER_BRANCH == 'true' }}
       uses: codacy/codacy-coverage-reporter-action@master
