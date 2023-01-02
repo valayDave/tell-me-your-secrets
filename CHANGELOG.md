@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.0.0 (Unreleased)
+
+# Breaking
+
+-   Dropped support for Python 3.6 since it's end of life (#60)
+
 ## v2.4.1 (2022-07-14)
 
 ### Fixed

@@ -28,9 +28,7 @@ From source:
 ```bash
 git clone git@github.com:valayDave/tell-me-your-secrets.git
 cd tell-me-your-secrets
-python3 -m venv .env
-source .env/bin/activate
-pip install .
+poetry install
 ```
 
 ## Module Usage
