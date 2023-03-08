@@ -115,13 +115,13 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "gitignore-parser"
-version = "0.0.8"
+version = "0.1.3"
 description = "A spec-compliant gitignore parser for Python 3.5+"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "gitignore_parser-0.0.8.tar.gz", hash = "sha256:b4e6e63d971810cbd2168bc02deddba719c07da655eaf56336d4bb0233ecef85"},
+    {file = "gitignore_parser-0.1.3.tar.gz", hash = "sha256:d0150d81889251d00cde6cf38931ab5613ca1109f5b3905a232c8458ff0d6991"},
 ]
 
 [[package]]
@@ -506,4 +506,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7.1"
-content-hash = "d9a9c438aca6101adcee41ad340589bbcc3922d4666385917b93e51182e7a064"
+content-hash = "6bdb5595798515abd17adb087dd66d3aacf1a6ad8156a40e6175f25ed3d62fd9"
