@@ -24,7 +24,7 @@ pytest = "^7.1.2"
 pytest-cov = "^3.0.0"
 flake8 = "^4.0.1"
 flake8-isort = "^4.1.1"
-pre-commit = "^2.20.0"
+pre-commit = "^2.21.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
