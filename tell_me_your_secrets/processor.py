@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from tell_me_your_secrets.logger import get_logger
 from tell_me_your_secrets.utils import get_file_data
@@ -10,11 +10,13 @@ class SignatureMatch:
     name: str
     part: str
     path: str
+    contents: Union[str, None]
 
-    def __init__(self, name: str, part: str, path: str):
+    def __init__(self, name: str, part: str, path: str, contents: Union[str, None] = None):
         self.name = name
         self.part = part
         self.path = path
+        self.contents = contents
 
 
 class Processor:
@@ -46,8 +48,8 @@ class Processor:
 
             if self.print_results:
                 module_logger.info(f'Signature Matched : {signature.name} | On Part : {signature.part} | With '
-                                   f'File : {file_path}')
+                                   f'File : {file_path} | Result : {match_result.matched_value}')
 
-            matches.append(SignatureMatch(signature.name, signature.part, file_path))
+            matches.append(SignatureMatch(signature.name, signature.part, file_path, match_result.matched_value))
 
         return matches
