@@ -23,4 +23,4 @@ class WriteResultsTest(unittest.TestCase):
             ]
 
             signature_recognizer.write_results_to_file()
-            self.assertEqual(b',name,part,path\n0,Match,file,/path/to/file\n', output_file.read())
+            self.assertEqual(b',name,part,path,contents\n0,Match,file,/path/to/file,\n', output_file.read())
