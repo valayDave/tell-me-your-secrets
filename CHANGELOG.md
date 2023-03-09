@@ -2,9 +2,13 @@
 
 ## v3.0.0 (Unreleased)
 
-# Breaking
+### Breaking
 
 -   Dropped support for Python 3.6 since it's end of life (#60)
+
+### Fixed
+
+-   Add support for Python 3.11 (#62)
 
 ## v2.4.1 (2022-07-14)
 
