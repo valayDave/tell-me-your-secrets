@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tell-me-your-secrets"
-version = "2.4.1"
+version = "2.4.2"
 description = "A simple module which finds files with different secrets keys present inside a directory"
 authors = ["Valay Dave <valaygaurang@gmail.com>"]
 license = "MIT"

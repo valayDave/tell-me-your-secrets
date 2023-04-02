@@ -161,7 +161,7 @@ class SignatureRecognizer:
         self.output_path = output_path
         # $ Make Configuration Objects For each of the Signatures in the Config Object.
         self.signatures: List[Signature] = self.load_signatures(config_object.get('signatures', {}), user_filters or [])
-        module_logger.info(f'Secret Sniffer Initialised For Path: {search_path}')
+        module_logger.debug(f'Secret Sniffer Initialised For Path: {search_path}')
 
     # $ Create the signature objects over here.
     @staticmethod
@@ -171,23 +171,23 @@ class SignatureRecognizer:
         for signature_obj in raw_signatures:
             # $ Ignore Object if no Name/Part.
             if 'name' not in signature_obj or 'part' not in signature_obj:
-                module_logger.warn('Signature definition missing either name or part')
+                module_logger.debug('Signature definition missing either name or part')
                 continue
             if len(user_filters) > 0:
                 if len([filtered_val for filtered_val in user_filters if str(filtered_val).lower() in str(signature_obj['name']).lower()]) == 0:
-                    module_logger.warning(f'Duplicate named used defined filter matching skipping '
-                                          f'adding {signature_obj["name"]} from config')
+                    module_logger.debug(f'Pattern did not match filters. Skipping filter matching '
+                                        f'for signature {signature_obj["name"]} from config')
                     continue
             if 'match' in signature_obj:
                 parsed_signatures.append(SimpleMatch(signature_obj['part'], signature_obj['name'], signature_obj['match']))
             elif 'regex' in signature_obj:
                 parsed_signatures.append(RegexSignature(signature_obj['part'], signature_obj['name'], signature_obj['regex']))
             else:
-                module_logger.warning('No Match Method Of Access')
+                module_logger.debug('No Match Method Of Access')
             chosen_configs.append(signature_obj['name'] + " In File " + signature_obj['part'])
 
         if len(user_filters) > 0:
-            module_logger.info('Applying Filtered Signatures : \n\n\t%s\n', '\n\t'.join(chosen_configs))
+            module_logger.debug('Applying Filtered Signatures : \n\n\t%s\n', '\n\t'.join(chosen_configs))
 
         return parsed_signatures
 
@@ -197,8 +197,7 @@ class SignatureRecognizer:
 
         self.process(filtered_files)
 
-        module_logger.info(f'Processed {len(filtered_files)} files and found {len(self.matched_signatures)} matches '
-                           f'from the search_path {self.search_path} in {self._get_time()} seconds')
+        module_logger.debug(f'Processed {len(filtered_files)} files and found {len(self.matched_signatures)} matches from the search_path {self.search_path} in {self._get_time()} seconds')
         if self.write_results:
             self.write_results_to_file()
 
