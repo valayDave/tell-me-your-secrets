@@ -106,7 +106,7 @@ Shell profile configuration file, Shell command alias configuration file, PHP co
 
 ## Author
 
-- [Valay Dave](valaygaurang@gmail.com)
+- Valay Dave
 
 ## Licence
 
